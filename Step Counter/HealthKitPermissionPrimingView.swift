@@ -5,11 +5,16 @@
 //  Created by Kuba Milcarz on 09/10/2025.
 //
 
+import HealthKitUI
 import SwiftUI
 
 struct HealthKitPermissionPrimingView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(HealthKitManager.self) private var healthKitManager
     
-    let description = """
+    @State private var showHealthKitPermissions: Bool = false
+ 
+    private let description = """
     This app displays your step and weight data in interactive charts.
 
     You can also add new step or weight data to Apple Health from this app. Your data is private and secured.
@@ -34,15 +39,29 @@ struct HealthKitPermissionPrimingView: View {
             }
             
             Button("Connect Apple Health") {
-                // more code to come
+                showHealthKitPermissions = true
             }
             .buttonStyle(.borderedProminent)
             .tint(.pink)
         }
         .padding(30)
+        .healthDataAccessRequest(
+            store: healthKitManager.store,
+            shareTypes: healthKitManager.types,
+            readTypes: healthKitManager.types,
+            trigger: showHealthKitPermissions) { result in
+                switch result {
+                case .success(let success):
+                    dismiss()
+                case .failure(let failure):
+                    // more code to come
+                    dismiss()
+                }
+            }
     }
 }
 
 #Preview {
     HealthKitPermissionPrimingView()
+        .environment(HealthKitManager())
 }
