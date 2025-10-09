@@ -11,7 +11,7 @@ import SwiftUI
 struct Step_CounterApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            DashboardView()
         }
     }
 }
