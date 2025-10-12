@@ -90,7 +90,6 @@ struct DashboardView: View {
                 }
                 .padding()
                 .task {
-//                    await healthKitManager.addSimulatorData()
                     showPermissionPriming = !hasSeenPermissionPriming
                 }
             }
