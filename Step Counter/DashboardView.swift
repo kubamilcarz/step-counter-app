@@ -5,6 +5,7 @@
 //  Created by Kuba Milcarz on 09/10/2025.
 //
 
+import Charts
 import SwiftUI
 
 enum HealthMetricContext: CaseIterable, Identifiable {
@@ -62,9 +63,15 @@ struct DashboardView: View {
                         }
                         .buttonStyle(.plain)
 
-                        RoundedRectangle(cornerRadius: 12)
-                            .foregroundStyle(.secondary)
-                            .frame(height: 150)
+                        Chart {
+                            ForEach(healthKitManager.stepData) { steps in
+                                BarMark(
+                                    x: .value("Date", steps.date, unit: .month),
+                                    y: .value("Steps", steps.value)
+                                )
+                            }
+                        }
+                        .frame(height: 150)
                     }
                     .padding()
                     .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
@@ -90,6 +97,7 @@ struct DashboardView: View {
                 }
                 .padding()
                 .task {
+                    await healthKitManager.fetchStepCount()
                     showPermissionPriming = !hasSeenPermissionPriming
                 }
             }
