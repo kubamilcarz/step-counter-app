@@ -8,19 +8,18 @@
 import SwiftUI
 
 struct HealthDataListView: View {
-    
     var metric: HealthMetricContext
     @State private var showAddData: Bool = false
-    
+
     @State private var addDataDate: Date = .now
     @State private var valueToAdd: String = ""
-    
+
     var body: some View {
-        List(0..<28) { i in
+        List(0 ..< 28) { _ in
             HStack {
                 Text(Date(), format: .dateTime.month().day().year())
                 Spacer()
-                Text(10_000, format: .number.precision(.fractionLength(metric == .steps ? 0 : 2)))
+                Text(10000, format: .number.precision(.fractionLength(metric == .steps ? 0 : 2)))
             }
         }
         .navigationTitle(metric.title)
@@ -33,13 +32,12 @@ struct HealthDataListView: View {
             }
         }
     }
-    
-    
+
     private var addDataView: some View {
         NavigationStack {
             Form {
                 DatePicker("Date", selection: $addDataDate, displayedComponents: .date)
-                
+
                 HStack {
                     Text(metric.title)
                     Spacer()
@@ -56,7 +54,7 @@ struct HealthDataListView: View {
                         // more code to come
                     }
                 }
-                
+
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Dismiss") {
                         showAddData = false
