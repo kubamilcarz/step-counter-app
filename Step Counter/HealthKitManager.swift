@@ -34,10 +34,14 @@ final class HealthKitManager {
             intervalComponents: .init(day: 1)
         )
         
-        let stepsCounts = try! await stepsQuery.result(for: store)
-        
-        stepData = stepsCounts.statistics().map {
-            HealthMetric(date: $0.startDate, value: $0.sumQuantity()?.doubleValue(for: .count()) ?? 0)
+        do {
+            let stepsCounts = try await stepsQuery.result(for: store)
+            
+            stepData = stepsCounts.statistics().map {
+                HealthMetric(date: $0.startDate, value: $0.sumQuantity()?.doubleValue(for: .count()) ?? 0)
+            }
+        } catch {
+            
         }
     }
     
@@ -57,13 +61,17 @@ final class HealthKitManager {
             intervalComponents: .init(day: 1)
         )
         
-        let weightsCount = try! await weightsQuery.result(for: store)
-        
-        weightData = weightsCount.statistics().map {
-            HealthMetric(
-                date: $0.startDate,
-                value: $0.mostRecentQuantity()?.doubleValue(for: .pound()) ?? 0
-            )
+        do {
+            let weightsCount = try await weightsQuery.result(for: store)
+            
+            weightData = weightsCount.statistics().map {
+                HealthMetric(
+                    date: $0.startDate,
+                    value: $0.mostRecentQuantity()?.doubleValue(for: .pound()) ?? 0
+                )
+            }
+        } catch {
+            
         }
     }
     
@@ -74,7 +82,7 @@ final class HealthKitManager {
             let stepQuantity = HKQuantity(unit: .count(), doubleValue: .random(in: 1_000...20_000))
             let weightQuantity = HKQuantity(unit: .pound(), doubleValue: .random(in: 160 + Double(i/3)...165 + Double(i/5)))
             
-            let startDate = Calendar.current.date(byAdding: .day, value: -1, to: .now)!
+            let startDate = Calendar.current.date(byAdding: .day, value: -i, to: .now)!
             let endDate = Calendar.current.date(byAdding: .second, value: 1, to: startDate)!
 
             let stepSample = HKQuantitySample(type: HKQuantityType(.stepCount), quantity: stepQuantity, start: startDate, end: endDate)
