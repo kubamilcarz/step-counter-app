@@ -22,7 +22,7 @@ final class HealthKitManager {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: .now)
         let endDate = calendar.date(byAdding: .day, value: 1, to: today)!
-        let startDate = calendar.date(byAdding: .day, value: -20, to: endDate)
+        let startDate = calendar.date(byAdding: .day, value: -28, to: endDate)
         
         let queryPredicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
         let samplePredicate = HKSamplePredicate.quantitySample(type: HKQuantityType(.stepCount), predicate: queryPredicate)
@@ -78,8 +78,8 @@ final class HealthKitManager {
     func addSimulatorData() async {
         var mockSamples: [HKQuantitySample] = []
         
-        for i in 0..<20 {
-            let stepQuantity = HKQuantity(unit: .count(), doubleValue: .random(in: 1_000...20_000))
+        for i in 0..<28 {
+            let stepQuantity = HKQuantity(unit: .count(), doubleValue: .random(in: 4_000...20_000))
             let weightQuantity = HKQuantity(unit: .pound(), doubleValue: .random(in: 160 + Double(i/3)...165 + Double(i/5)))
             
             let startDate = Calendar.current.date(byAdding: .day, value: -i, to: .now)!
