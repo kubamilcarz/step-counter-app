@@ -13,6 +13,7 @@ struct WeightDiffBarChart: View {
     var chartData: [WeekdayChartData]
     
     @State private var rawSelectedDate: Date?
+    @State private var selectedDay: Date?
     
     var minValue: Double {
         chartData.map(\.value).min() ?? 0
@@ -77,6 +78,12 @@ struct WeightDiffBarChart: View {
         }
         .padding()
         .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+        .sensoryFeedback(.selection, trigger: selectedDay)
+        .onChange(of: rawSelectedDate) { oldValue, newValue in
+            if oldValue?.weekdayInt != newValue?.weekdayInt {
+                selectedDay = newValue
+            }
+        }
     }
     
     private var annotationView: some View {
