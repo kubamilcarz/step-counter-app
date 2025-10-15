@@ -13,8 +13,18 @@ struct WeightLineChart: View {
     var selectedStat: HealthMetricContext
     var chartData: [HealthMetric]
     
+    @State private var rawSelectedDate: Date?
+    
     var minValue: Double {
         chartData.map(\.value).min() ?? 0
+    }
+    
+    var selectedHealthMetric: HealthMetric? {
+        guard let rawSelectedDate else { return nil }
+        
+        return chartData.first(where: {
+            Calendar.current.isDate(rawSelectedDate, inSameDayAs: $0.date)
+        })
     }
     
     var body: some View {
@@ -41,6 +51,15 @@ struct WeightLineChart: View {
             .buttonStyle(.plain)
             
             Chart {
+                if let selectedHealthMetric {
+                    RuleMark(x: .value("Selected Metric", selectedHealthMetric.date, unit: .day))
+                        .foregroundStyle(.secondary.opacity(0.3))
+                        .offset(y: -10)
+                        .annotation(position: .top, spacing: 0, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
+                            annotationView
+                        }
+                }
+                
                 // TODO: Implement user goal
                 RuleMark(y: .value("Goal", 155))
                     .foregroundStyle(.mint)
@@ -65,6 +84,7 @@ struct WeightLineChart: View {
             }
             .frame(height: 150)
             .chartYScale(domain: .automatic(includesZero: false))
+            .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
             .chartXAxis {
                 AxisMarks {
                     AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
@@ -81,6 +101,24 @@ struct WeightLineChart: View {
         }
         .padding()
         .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+    }
+    
+    private var annotationView: some View {
+        VStack(alignment: .leading) {
+            Text(selectedHealthMetric?.date ?? .now, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
+                .font(.footnote.bold())
+                .foregroundStyle(.secondary)
+
+            Text(selectedHealthMetric?.value ?? 0, format: .number.precision(.fractionLength(1)))
+                .fontWeight(.heavy)
+                .foregroundStyle(.indigo)
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color(.secondarySystemBackground))
+                .shadow(color: .secondary.opacity(0.3), radius: 2, x: 2, y: 2)
+        )
     }
 }
 
