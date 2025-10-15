@@ -59,14 +59,14 @@ struct HealthDataListView: View {
             .navigationTitle(metric.title)
             .alert(isPresented: $showAlert, error: writeError) { writeError in
                 switch writeError {
-                case .authNotDetermined, .noData, .unableToCompleteRequest:
-                    EmptyView()
                 case .sharingDenied(_):
                     Button("Settings") {
                         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                     }
                     
                     Button("Cancel", role: .cancel) { }
+                default:
+                    EmptyView()
                 }
             } message: { writeError in
                 Text(writeError.failureReason)
@@ -74,10 +74,17 @@ struct HealthDataListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add Data") {
+                        guard let value = Double(valueToAdd) else {
+                            writeError = .invalidValue
+                            showAlert = true
+                            valueToAdd = ""
+                            return
+                        }
+                        
                         Task {
                             if metric == .steps {
                                 do {
-                                    try await healthKitManager.addStepData(for: addDataDate, value: Double(valueToAdd)!)
+                                    try await healthKitManager.addStepData(for: addDataDate, value: value)
                                     try await healthKitManager.fetchStepCount()
                                     
                                     showAddData = false
@@ -90,7 +97,7 @@ struct HealthDataListView: View {
                                 }
                             } else {
                                 do {
-                                    try await healthKitManager.addWeightData(for: addDataDate, value: Double(valueToAdd)!)
+                                    try await healthKitManager.addWeightData(for: addDataDate, value: value)
                                     try await healthKitManager.fetchWeightsCount()
                                     try await healthKitManager.fetchWeightsForDifferentials()
                                     
