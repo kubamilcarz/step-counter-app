@@ -37,8 +37,8 @@
 		C87BCF6A2E97FE2B002A5510 = {
 			isa = PBXGroup;
 			children = (
-				C87BCF752E97FE2B002A5510 /* Step Counter */,
 				C87BCF742E97FE2B002A5510 /* Products */,
+				C87BCF752E97FE2B002A5510 /* Step Counter */,
 			);
 			sourceTree = "<group>";
 		};
