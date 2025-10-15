@@ -14,6 +14,7 @@ struct WeightLineChart: View {
     var chartData: [HealthMetric]
     
     @State private var rawSelectedDate: Date?
+    @State private var selectedDay: Date?
     
     var minValue: Double {
         chartData.map(\.value).min() ?? 0
@@ -50,57 +51,67 @@ struct WeightLineChart: View {
             }
             .buttonStyle(.plain)
             
-            Chart {
-                if let selectedHealthMetric {
-                    RuleMark(x: .value("Selected Metric", selectedHealthMetric.date, unit: .day))
-                        .foregroundStyle(.secondary.opacity(0.3))
-                        .offset(y: -10)
-                        .annotation(position: .top, spacing: 0, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
-                            annotationView
-                        }
-                }
-                
-                // TODO: Implement user goal
-                RuleMark(y: .value("Goal", 155))
-                    .foregroundStyle(.mint)
-                    .lineStyle(.init(lineWidth: 1, dash: [5]))
-                
-                ForEach(chartData) { weight in
-                    AreaMark(
-                        x: .value("Day", weight.date, unit: .day),
-                        yStart: .value("Value", weight.value),
-                        yEnd: .value("Min Value", minValue)
-                    )
-                    .foregroundStyle(Gradient(colors: [.indigo.opacity(0.5), .indigo.opacity(0)]))
+            if chartData.isEmpty {
+                ChartEmptyView(title: "No Data", systemImage: "chart.line.downtrend.xyaxis", description: "There is no step count data from the Health App.")
+            } else {
+                Chart {
+                    if let selectedHealthMetric {
+                        RuleMark(x: .value("Selected Metric", selectedHealthMetric.date, unit: .day))
+                            .foregroundStyle(.secondary.opacity(0.3))
+                            .offset(y: -10)
+                            .annotation(position: .top, spacing: 0, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
+                                annotationView
+                            }
+                    }
                     
-                    LineMark(
-                        x: .value("Day", weight.date, unit: .day),
-                        y: .value("Value", weight.value)
-                    )
-                    .foregroundStyle(.indigo)
-                    .interpolationMethod(.catmullRom)
-                    .symbol(.circle)
-                }
-            }
-            .frame(height: 150)
-            .chartYScale(domain: .automatic(includesZero: false))
-            .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
-            .chartXAxis {
-                AxisMarks {
-                    AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
-                }
-            }
-            .chartYAxis {
-                AxisMarks { value in
-                    AxisGridLine()
-                        .foregroundStyle(.secondary.opacity(0.3))
+                    // TODO: Implement user goal
+                    RuleMark(y: .value("Goal", 155))
+                        .foregroundStyle(.mint)
+                        .lineStyle(.init(lineWidth: 1, dash: [5]))
                     
-                    AxisValueLabel()
+                    ForEach(chartData) { weight in
+                        AreaMark(
+                            x: .value("Day", weight.date, unit: .day),
+                            yStart: .value("Value", weight.value),
+                            yEnd: .value("Min Value", minValue)
+                        )
+                        .foregroundStyle(Gradient(colors: [.indigo.opacity(0.5), .indigo.opacity(0)]))
+                        
+                        LineMark(
+                            x: .value("Day", weight.date, unit: .day),
+                            y: .value("Value", weight.value)
+                        )
+                        .foregroundStyle(.indigo)
+                        .interpolationMethod(.catmullRom)
+                        .symbol(.circle)
+                    }
+                }
+                .frame(height: 150)
+                .chartYScale(domain: .automatic(includesZero: false))
+                .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
+                .chartXAxis {
+                    AxisMarks {
+                        AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks { value in
+                        AxisGridLine()
+                            .foregroundStyle(.secondary.opacity(0.3))
+                        
+                        AxisValueLabel()
+                    }
                 }
             }
         }
         .padding()
         .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+        .sensoryFeedback(.selection, trigger: selectedDay)
+        .onChange(of: rawSelectedDate) { oldValue, newValue in
+            if oldValue?.weekdayInt != newValue?.weekdayInt {
+                selectedDay = newValue
+            }
+        }
     }
     
     private var annotationView: some View {

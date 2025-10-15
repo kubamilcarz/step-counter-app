@@ -14,6 +14,7 @@ struct StepBarChart: View {
     var chartData: [HealthMetric]
     
     @State private var rawSelectedDate: Date?
+    @State private var selectedDay: Date?
     
     var avgStepCount: Double {
         guard !chartData.isEmpty else { return 0 }
@@ -52,47 +53,57 @@ struct StepBarChart: View {
             }
             .buttonStyle(.plain)
             
-            Chart {
-                if let selectedHealthMetric {
-                    RuleMark(x: .value("Selected Metric", selectedHealthMetric.date, unit: .day))
-                        .foregroundStyle(.secondary.opacity(0.3))
-                        .offset(y: -10)
-                        .annotation(position: .top, spacing: 0, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
-                            annotationView
-                        }
-                }
-                
-                RuleMark(y: .value("Average", avgStepCount))
-                    .foregroundStyle(.secondary)
-                    .lineStyle(.init(lineWidth: 1, dash: [5]))
-                
-                ForEach(chartData) { steps in
-                    BarMark(
-                        x: .value("Date", steps.date, unit: .day),
-                        y: .value("Steps", steps.value)
-                    )
-                    .foregroundStyle(.pink.gradient)
-                    .opacity(rawSelectedDate == nil || steps.date == selectedHealthMetric?.date ? 1 : 0.3)
-                }
-            }
-            .frame(height: 150)
-            .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
-            .chartXAxis {
-                AxisMarks {
-                    AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
-                }
-            }
-            .chartYAxis {
-                AxisMarks { value in
-                    AxisGridLine()
-                        .foregroundStyle(.secondary.opacity(0.3))
+            if chartData.isEmpty {
+                ChartEmptyView(title: "No Data", systemImage: "chart.bar", description: "There is no step count data from the Health App.")
+            } else {
+                Chart {
+                    if let selectedHealthMetric {
+                        RuleMark(x: .value("Selected Metric", selectedHealthMetric.date, unit: .day))
+                            .foregroundStyle(.secondary.opacity(0.3))
+                            .offset(y: -10)
+                            .annotation(position: .top, spacing: 0, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
+                                annotationView
+                            }
+                    }
                     
-                    AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
+                    RuleMark(y: .value("Average", avgStepCount))
+                        .foregroundStyle(.secondary)
+                        .lineStyle(.init(lineWidth: 1, dash: [5]))
+                    
+                    ForEach(chartData) { steps in
+                        BarMark(
+                            x: .value("Date", steps.date, unit: .day),
+                            y: .value("Steps", steps.value)
+                        )
+                        .foregroundStyle(.pink.gradient)
+                        .opacity(rawSelectedDate == nil || steps.date == selectedHealthMetric?.date ? 1 : 0.3)
+                    }
+                }
+                .frame(height: 150)
+                .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
+                .chartXAxis {
+                    AxisMarks {
+                        AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks { value in
+                        AxisGridLine()
+                            .foregroundStyle(.secondary.opacity(0.3))
+                        
+                        AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
+                    }
                 }
             }
         }
         .padding()
         .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+        .sensoryFeedback(.selection, trigger: selectedDay)
+        .onChange(of: rawSelectedDate) { oldValue, newValue in
+            if oldValue?.weekdayInt != newValue?.weekdayInt {
+                selectedDay = newValue
+            }
+        }
     }
     
     private var annotationView: some View {

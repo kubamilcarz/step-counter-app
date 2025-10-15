@@ -26,7 +26,8 @@ struct DashboardView: View {
     
     @State private var selectedStat: HealthMetricContext = .steps
     @State private var showPermissionPriming: Bool = false
-    @AppStorage("hasSeenPermissionPriming") private var hasSeenPermissionPriming: Bool = false
+    @State private var showAlert: Bool = false
+    @State private var fetchError: STError = .noData
 
     var isSteps: Bool { selectedStat == .steps }
 
@@ -65,10 +66,20 @@ struct DashboardView: View {
                 .padding()
             }
             .task {
-                await healthKitManager.fetchStepCount()
-                await healthKitManager.fetchWeightsCount()
-                await healthKitManager.fetchWeightsForDifferentials()
-                showPermissionPriming = !hasSeenPermissionPriming
+                do {
+                    try await healthKitManager.fetchStepCount()
+                    try await healthKitManager.fetchWeightsCount()
+                    try await healthKitManager.fetchWeightsForDifferentials()
+                    
+                } catch STError.authNotDetermined {
+                    showPermissionPriming = true
+                } catch STError.noData {
+                    fetchError = .noData
+                    showAlert = true
+                } catch {
+                    fetchError = .unableToCompleteRequest
+                    showAlert = true
+                }
             }
             .navigationTitle("Dashboard")
             .navigationDestination(for: HealthMetricContext.self) { metric in
@@ -77,7 +88,12 @@ struct DashboardView: View {
             .sheet(isPresented: $showPermissionPriming) {
                 // fetch health data
             } content: {
-                HealthKitPermissionPrimingView(hasSeenView: $hasSeenPermissionPriming)
+                HealthKitPermissionPrimingView()
+            }
+            .alert(isPresented: $showAlert, error: fetchError) { _ in
+                // actions
+            } message: { fetchError in
+                Text(fetchError.failureReason)
             }
         }
         .tint(isSteps ? .pink : .indigo)
