@@ -15,8 +15,15 @@ enum HealthMetricContext: CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .steps: return "Steps"
-        case .weight: return "Weight"
+        case .steps: "Steps"
+        case .weight: "Weight"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .steps: .pink
+        case .weight: .indigo
         }
     }
 }
