@@ -29,28 +29,13 @@ struct WeightLineChart: View {
     }
     
     var body: some View {
-        VStack {
-            NavigationLink(value: selectedStat) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Label("Weight", systemImage: "figure")
-                            .font(.title3.bold())
-                            .foregroundStyle(.indigo)
-                        
-                        Text("Avg: 180 lbs")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.forward")
-                        .foregroundStyle(.secondary)
-                }
-                .padding(.bottom, 12)
-            }
-            .buttonStyle(.plain)
-            
+        ChartContainer(
+            title: "Weight",
+            symbol: "figure",
+            subtitle: "Avg: 180 lbs",
+            context: .weight,
+            isNav: true
+        ) {
             if chartData.isEmpty {
                 ChartEmptyView(title: "No Data", systemImage: "chart.line.downtrend.xyaxis", description: "There is no step count data from the Health App.")
             } else {
@@ -104,8 +89,6 @@ struct WeightLineChart: View {
                 }
             }
         }
-        .padding()
-        .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
         .sensoryFeedback(.selection, trigger: selectedDay)
         .onChange(of: rawSelectedDate) { oldValue, newValue in
             if oldValue?.weekdayInt != newValue?.weekdayInt {

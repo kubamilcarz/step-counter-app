@@ -28,19 +28,13 @@ struct WeightDiffBarChart: View {
     }
     
     var body: some View {
-        VStack {
-            VStack(alignment: .leading) {
-                Label("Average Weight Change", systemImage: "figure")
-                    .font(.title3.bold())
-                    .foregroundStyle(.indigo)
-                
-                Text("Per Weekday: (Last 28 Days)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.bottom, 12)
-            
+        ChartContainer(
+            title: "Average Weight Change",
+            symbol: "figure",
+            subtitle: "Per Weekday: (Last 28 Days)",
+            context: .weight,
+            isNav: false
+        ) {
             if chartData.isEmpty {
                 ChartEmptyView(title: "No Data", systemImage: "chart.bar", description: "There is no step count data from the Health App.")
             } else {
@@ -80,8 +74,6 @@ struct WeightDiffBarChart: View {
                 }
             }
         }
-        .padding()
-        .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
         .sensoryFeedback(.selection, trigger: selectedDay)
         .onChange(of: rawSelectedDate) { oldValue, newValue in
             if oldValue?.weekdayInt != newValue?.weekdayInt {
