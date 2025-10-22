@@ -5,14 +5,28 @@
 //  Created by Kuba Milcarz on 22/10/2025.
 //
 
+import Charts
 import SwiftUI
 
-struct ChartAnnotationView: View {
+struct ChartAnnotationView: ChartContent {
     
     var data: DateValueChartData
     var context: HealthMetricContext
     
-    var body: some View {
+    var body: some ChartContent {
+        RuleMark(x: .value("Selected Metric", data.date, unit: .day))
+            .foregroundStyle(.secondary.opacity(0.3))
+            .offset(y: -10)
+            .annotation(
+                position: .top,
+                spacing: 0,
+                overflowResolution: .init(x: .fit(to: .chart), y: .disabled)
+            ) {
+                annotationView
+            }
+    }
+    
+    var annotationView: some View {
         VStack(alignment: .leading) {
             Text(data.date, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
                 .font(.footnote.bold())
@@ -32,8 +46,10 @@ struct ChartAnnotationView: View {
 }
 
 #Preview {
-    ChartAnnotationView(
-        data: .init(date: .now, value: 1_000),
-        context: .steps
-    )
+    Chart {
+        ChartAnnotationView(
+            data: .init(date: .now, value: 1_000),
+            context: .steps
+        )
+    }
 }
