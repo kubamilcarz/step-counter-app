@@ -35,9 +35,7 @@ struct DashboardView: View {
     @State private var showPermissionPriming: Bool = false
     @State private var showAlert: Bool = false
     @State private var fetchError: STError = .noData
-
-    var isSteps: Bool { selectedStat == .steps }
-
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -70,28 +68,13 @@ struct DashboardView: View {
                 }
                 .padding()
             }
-            .task {
-                do {
-                    try await healthKitManager.fetchStepCount()
-                    try await healthKitManager.fetchWeightsCount()
-                    try await healthKitManager.fetchWeightsForDifferentials()
-                    
-                } catch STError.authNotDetermined {
-                    showPermissionPriming = true
-                } catch STError.noData {
-                    fetchError = .noData
-                    showAlert = true
-                } catch {
-                    fetchError = .unableToCompleteRequest
-                    showAlert = true
-                }
-            }
+            .onAppear(perform: fetchHealthData)
             .navigationTitle("Dashboard")
             .navigationDestination(for: HealthMetricContext.self) { metric in
                 HealthDataListView(metric: metric)
             }
             .sheet(isPresented: $showPermissionPriming) {
-                // fetch health data
+                fetchHealthData()
             } content: {
                 HealthKitPermissionPrimingView()
             }
@@ -101,7 +84,29 @@ struct DashboardView: View {
                 Text(fetchError.failureReason)
             }
         }
-        .tint(isSteps ? .pink : .indigo)
+        .tint(selectedStat.color)
+    }
+    
+    private func fetchHealthData() {
+        Task {
+            do {
+                async let steps = healthKitManager.fetchStepCount()
+                async let weightsForLineChart = healthKitManager.fetchWeightsCount(daysBack: 28)
+                async let weightsForDiffBarChart = healthKitManager.fetchWeightsCount(daysBack: 29)
+                
+                healthKitManager.stepData = try await steps
+                healthKitManager.weightData = try await weightsForLineChart
+                healthKitManager.weightDiffData = try await weightsForDiffBarChart
+            } catch STError.authNotDetermined {
+                showPermissionPriming = true
+            } catch STError.noData {
+                fetchError = .noData
+                showAlert = true
+            } catch {
+                fetchError = .unableToCompleteRequest
+                showAlert = true
+            }
+        }
     }
 }
 
