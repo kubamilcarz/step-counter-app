@@ -52,8 +52,7 @@ struct DashboardView: View {
                     switch selectedStat {
                     case .steps:
                         StepBarChart(
-                            selectedStat: selectedStat,
-                            chartData: healthKitManager.stepData
+                            chartData: ChartHelper.convert(data: healthKitManager.stepData)
                         )
                         
                         StepPieChart(
@@ -61,8 +60,7 @@ struct DashboardView: View {
                         )
                     case .weight:
                         WeightLineChart(
-                            selectedStat: selectedStat,
-                            chartData: healthKitManager.weightData
+                            chartData: ChartHelper.convert(data: healthKitManager.weightData)
                         )
                         
                         WeightDiffBarChart(

@@ -10,8 +10,7 @@ import SwiftUI
 
 struct WeightLineChart: View {
     
-    var selectedStat: HealthMetricContext
-    var chartData: [HealthMetric]
+    var chartData: [DateValueChartData]
     
     @State private var rawSelectedDate: Date?
     @State private var selectedDay: Date?
@@ -20,12 +19,8 @@ struct WeightLineChart: View {
         chartData.map(\.value).min() ?? 0
     }
     
-    var selectedHealthMetric: HealthMetric? {
-        guard let rawSelectedDate else { return nil }
-        
-        return chartData.first(where: {
-            Calendar.current.isDate(rawSelectedDate, inSameDayAs: $0.date)
-        })
+    var selectedData: DateValueChartData? {
+        ChartHelper.parseSelectedData(from: chartData, in: rawSelectedDate)
     }
     
     var body: some View {
@@ -40,12 +35,16 @@ struct WeightLineChart: View {
                 ChartEmptyView(title: "No Data", systemImage: "chart.line.downtrend.xyaxis", description: "There is no step count data from the Health App.")
             } else {
                 Chart {
-                    if let selectedHealthMetric {
-                        RuleMark(x: .value("Selected Metric", selectedHealthMetric.date, unit: .day))
+                    if let selectedData {
+                        RuleMark(x: .value("Selected Metric", selectedData.date, unit: .day))
                             .foregroundStyle(.secondary.opacity(0.3))
                             .offset(y: -10)
-                            .annotation(position: .top, spacing: 0, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
-                                annotationView
+                            .annotation(
+                                position: .top,
+                                spacing: 0,
+                                overflowResolution: .init(x: .fit(to: .chart), y: .disabled)
+                            ) {
+                                ChartAnnotationView(data: selectedData, context: .weight)
                             }
                     }
                     
@@ -96,26 +95,9 @@ struct WeightLineChart: View {
             }
         }
     }
-    
-    private var annotationView: some View {
-        VStack(alignment: .leading) {
-            Text(selectedHealthMetric?.date ?? .now, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
-                .font(.footnote.bold())
-                .foregroundStyle(.secondary)
 
-            Text(selectedHealthMetric?.value ?? 0, format: .number.precision(.fractionLength(1)))
-                .fontWeight(.heavy)
-                .foregroundStyle(.indigo)
-        }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 4)
-                .fill(Color(.secondarySystemBackground))
-                .shadow(color: .secondary.opacity(0.3), radius: 2, x: 2, y: 2)
-        )
-    }
 }
 
 #Preview {
-    WeightLineChart(selectedStat: .weight, chartData: MockData.weights)
+    WeightLineChart(chartData: ChartHelper.convert(data: MockData.weights))
 }
