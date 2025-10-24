@@ -176,7 +176,7 @@ struct ChartHelper {
     /// - Important: The returned array will have at most 7 elements (one per weekday).
     /// - SeeAlso: `Date.weekdayInt` extension for weekday integer representation.
     static func averageWeekdayCount(for metric: [HealthMetric]) -> [DateValueChartData] {
-        let sortedByWeekday = metric.sorted(using: KeyPathComparator(\.date.weekdayInt))
+        let sortedByWeekday = metric.sorted { $0.date.weekdayInt < $1.date.weekdayInt }
         let weekdayArray = sortedByWeekday.chunked(by: { $0.date.weekdayInt == $1.date.weekdayInt })
         
         var weekdayChartData: [DateValueChartData] = []
@@ -253,7 +253,7 @@ struct ChartHelper {
             diffValues.append((date: date, value: diff))
         }
         
-        let sortedByWeekday = diffValues.sorted(using: KeyPathComparator(\.date.weekdayInt))
+        let sortedByWeekday = diffValues.sorted { $0.date.weekdayInt < $1.date.weekdayInt }
         let weekdayArray = sortedByWeekday.chunked { $0.date.weekdayInt == $1.date.weekdayInt }
         
         var weekdayChartData: [DateValueChartData] = []

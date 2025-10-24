@@ -9,6 +9,14 @@ import Foundation
 import HealthKit
 import Observation
 
+@Observable
+@MainActor
+final class HealthKitData: Sendable {
+    var stepData: [HealthMetric] = []
+    var weightData: [HealthMetric] = []
+    var weightDiffData: [HealthMetric] = []
+}
+
 /// A manager class responsible for handling all HealthKit interactions.
 ///
 /// This class provides a centralized interface for:
@@ -28,7 +36,7 @@ import Observation
 /// - Note: This class requires HealthKit authorization before performing any operations.
 /// - Important: All fetch and add methods are asynchronous and may throw errors.
 @Observable
-final class HealthKitManager {
+final class HealthKitManager: Sendable {
     
     // MARK: - Properties
     
@@ -43,24 +51,6 @@ final class HealthKitManager {
     /// - `stepCount`: Daily step count data
     /// - `bodyMass`: Body weight measurements
     let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
-    
-    /// Cached array of step count metrics.
-    ///
-    /// Each metric contains a date and the corresponding step count value.
-    /// This array is automatically updated when new data is fetched.
-    var stepData: [HealthMetric] = []
-    
-    /// Cached array of body weight metrics.
-    ///
-    /// Each metric contains a date and the corresponding weight value in pounds.
-    /// This array is automatically updated when new data is fetched.
-    var weightData: [HealthMetric] = []
-    
-    /// Cached array of weight difference metrics.
-    ///
-    /// This array stores calculated differences in weight over time,
-    /// useful for tracking weight trends and changes.
-    var weightDiffData: [HealthMetric] = []
     
     // MARK: - Fetch methods
     

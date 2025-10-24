@@ -29,6 +29,7 @@ enum HealthMetricContext: CaseIterable, Identifiable {
 }
 
 struct DashboardView: View {
+    @Environment(HealthKitData.self) private var healthKitData
     @Environment(HealthKitManager.self) private var healthKitManager
     
     @State private var selectedStat: HealthMetricContext = .steps
@@ -50,19 +51,19 @@ struct DashboardView: View {
                     switch selectedStat {
                     case .steps:
                         StepBarChart(
-                            chartData: ChartHelper.convert(data: healthKitManager.stepData)
+                            chartData: ChartHelper.convert(data: healthKitData.stepData)
                         )
                         
                         StepPieChart(
-                            chartData: ChartHelper.averageWeekdayCount(for: healthKitManager.stepData)
+                            chartData: ChartHelper.averageWeekdayCount(for: healthKitData.stepData)
                         )
                     case .weight:
                         WeightLineChart(
-                            chartData: ChartHelper.convert(data: healthKitManager.weightData)
+                            chartData: ChartHelper.convert(data: healthKitData.weightData)
                         )
                         
                         WeightDiffBarChart(
-                            chartData: ChartHelper.averageDailyWeightDiffs(for: healthKitManager.weightDiffData)
+                            chartData: ChartHelper.averageDailyWeightDiffs(for: healthKitData.weightDiffData)
                         )
                     }
                 }
@@ -94,9 +95,9 @@ struct DashboardView: View {
                 async let weightsForLineChart = healthKitManager.fetchWeightsCount(daysBack: 28)
                 async let weightsForDiffBarChart = healthKitManager.fetchWeightsCount(daysBack: 29)
                 
-                healthKitManager.stepData = try await steps
-                healthKitManager.weightData = try await weightsForLineChart
-                healthKitManager.weightDiffData = try await weightsForDiffBarChart
+                healthKitData.stepData = try await steps
+                healthKitData.weightData = try await weightsForLineChart
+                healthKitData.weightDiffData = try await weightsForDiffBarChart
             } catch STError.authNotDetermined {
                 showPermissionPriming = true
             } catch STError.noData {
