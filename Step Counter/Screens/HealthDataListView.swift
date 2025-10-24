@@ -35,6 +35,11 @@ struct HealthDataListView: View {
             .accessibilityElement(children: .combine)
         }
         .navigationTitle(metric.title)
+        .overlay {
+            if listData.isEmpty {
+                ContentUnavailableView("No \(metric.title) to Display", systemImage: metric == .steps ? "figure.walk" : "figure")
+            }
+        }
         .sheet(isPresented: $showAddData) {
             addDataView
         }
