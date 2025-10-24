@@ -9,11 +9,13 @@ import SwiftUI
 
 @main
 struct Step_CounterApp: App {
+    let healthKitData = HealthKitData()
     let healthKitManager = HealthKitManager()
 
     var body: some Scene {
         WindowGroup {
             DashboardView()
+                .environment(healthKitData)
                 .environment(healthKitManager)
         }
     }
