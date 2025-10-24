@@ -24,35 +24,27 @@ struct WeightLineChart: View {
     }
     
     var body: some View {
-        let config = ChartContainerConfiguration(
-            title: "Weight",
-            symbol: "figure",
-            subtitle: "Avg: 180 lbs",
-            context: .weight,
-            isNav: true
-        )
-        
-        ChartContainer(config: config) {
-            if chartData.isEmpty {
-                ChartEmptyView(title: "No Data", systemImage: "chart.line.downtrend.xyaxis", description: "There is no step count data from the Health App.")
-            } else {
-                Chart {
-                    if let selectedData {
-                        ChartAnnotationView(data: selectedData, context: .weight)
-                    }
-                    
-                    // TODO: Implement user goal
-                    RuleMark(y: .value("Goal", 155))
-                        .foregroundStyle(.mint)
-                        .lineStyle(.init(lineWidth: 1, dash: [5]))
-                    
-                    ForEach(chartData) { weight in
+        ChartContainer(chartType: .weightLine(average: chartData.map(\.value).average)) {
+            Chart {
+                if let selectedData {
+                    ChartAnnotationView(data: selectedData, context: .weight)
+                }
+                
+                // TODO: Implement user goal
+                RuleMark(y: .value("Goal", 155))
+                    .foregroundStyle(.mint)
+                    .lineStyle(.init(lineWidth: 1, dash: [5]))
+                    .accessibilityHidden(true)
+                
+                ForEach(chartData) { weight in
+                    Plot {
                         AreaMark(
                             x: .value("Day", weight.date, unit: .day),
                             yStart: .value("Value", weight.value),
                             yEnd: .value("Min Value", minValue)
                         )
                         .foregroundStyle(Gradient(colors: [.indigo.opacity(0.5), .indigo.opacity(0)]))
+                        .interpolationMethod(.catmullRom)
                         
                         LineMark(
                             x: .value("Day", weight.date, unit: .day),
@@ -62,22 +54,29 @@ struct WeightLineChart: View {
                         .interpolationMethod(.catmullRom)
                         .symbol(.circle)
                     }
+                    .accessibilityLabel(weight.date.accessibilityDate)
+                    .accessibilityValue("\(weight.value.formatted(.number.precision(.fractionLength(1)))) pounds")
                 }
-                .frame(height: 150)
-                .chartYScale(domain: .automatic(includesZero: false))
-                .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
-                .chartXAxis {
-                    AxisMarks {
-                        AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
-                    }
+            }
+            .frame(height: 150)
+            .chartYScale(domain: .automatic(includesZero: false))
+            .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
+            .chartXAxis {
+                AxisMarks {
+                    AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
                 }
-                .chartYAxis {
-                    AxisMarks { value in
-                        AxisGridLine()
-                            .foregroundStyle(.secondary.opacity(0.3))
-                        
-                        AxisValueLabel()
-                    }
+            }
+            .chartYAxis {
+                AxisMarks { value in
+                    AxisGridLine()
+                        .foregroundStyle(.secondary.opacity(0.3))
+                    
+                    AxisValueLabel()
+                }
+            }
+            .overlay {
+                if chartData.isEmpty {
+                    ChartEmptyView(title: "No Data", systemImage: "chart.line.downtrend.xyaxis", description: "There is no step count data from the Health App.")
                 }
             }
         }
@@ -88,7 +87,7 @@ struct WeightLineChart: View {
             }
         }
     }
-
+    
 }
 
 #Preview {
