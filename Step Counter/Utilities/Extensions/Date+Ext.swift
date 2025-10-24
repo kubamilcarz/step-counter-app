@@ -1,5 +1,5 @@
 //
-//  Date+ext.swift
+//  Date+Ext.swift
 //  Step Counter
 //
 //  Created by Kuba Milcarz on 14/10/2025.

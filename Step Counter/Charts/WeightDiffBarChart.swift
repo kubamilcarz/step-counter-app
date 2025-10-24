@@ -33,37 +33,38 @@ struct WeightDiffBarChart: View {
         )
         
         ChartContainer(config: config) {
-            if chartData.isEmpty {
-                ChartEmptyView(title: "No Data", systemImage: "chart.bar", description: "There is no step count data from the Health App.")
-            } else {
-                Chart {
-                    if let selectedData {
-                        ChartAnnotationView(data: selectedData, context: .weight)
-                    }
+            Chart {
+                if let selectedData {
+                    ChartAnnotationView(data: selectedData, context: .weight)
+                }
+                
+                ForEach(chartData) { weightDiff in
+                    BarMark(
+                        x: .value("Day", weightDiff.date, unit: .day),
+                        y: .value("Value", weightDiff.value)
+                    )
+                    .foregroundStyle(weightDiff.value >= 0 ? .indigo : .mint)
+                    .opacity(rawSelectedDate == nil || weightDiff.date == selectedData?.date ? 1 : 0.3)
+                }
+            }
+            .frame(height: 150)
+            .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
+            .chartXAxis {
+                AxisMarks(values: .stride(by: .day)) {
+                    AxisValueLabel(format: .dateTime.weekday(.abbreviated), centered: true)
+                }
+            }
+            .chartYAxis {
+                AxisMarks { value in
+                    AxisGridLine()
+                        .foregroundStyle(.secondary.opacity(0.3))
                     
-                    ForEach(chartData) { weightDiff in
-                        BarMark(
-                            x: .value("Day", weightDiff.date, unit: .day),
-                            y: .value("Value", weightDiff.value)
-                        )
-                        .foregroundStyle(weightDiff.value >= 0 ? .indigo : .mint)
-                        .opacity(rawSelectedDate == nil || weightDiff.date == selectedData?.date ? 1 : 0.3)
-                    }
+                    AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
                 }
-                .frame(height: 150)
-                .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
-                .chartXAxis {
-                    AxisMarks(values: .stride(by: .day)) {
-                        AxisValueLabel(format: .dateTime.weekday(.abbreviated), centered: true)
-                    }
-                }
-                .chartYAxis {
-                    AxisMarks { value in
-                        AxisGridLine()
-                            .foregroundStyle(.secondary.opacity(0.3))
-                        
-                        AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
-                    }
+            }
+            .overlay {
+                if chartData.isEmpty {
+                    ChartEmptyView(title: "No Data", systemImage: "chart.bar", description: "There is no step count data from the Health App.")
                 }
             }
         }
