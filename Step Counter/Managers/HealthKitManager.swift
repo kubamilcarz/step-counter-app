@@ -9,11 +9,78 @@ import Foundation
 import HealthKit
 import Observation
 
+/// A container class for storing cached HealthKit data.
+///
+/// `HealthKitData` serves as a separate, observable data store for health metrics
+/// fetched from HealthKit. This separation follows Swift 6 concurrency best practices
+/// by isolating mutable state from the `HealthKitManager` operations class.
+///
+/// ## Architecture Pattern
+/// This class implements the separation of concerns pattern:
+/// - **HealthKitData**: Holds mutable cached data (State)
+/// - **HealthKitManager**: Performs HealthKit operations (Behavior)
+///
+/// ## Thread Safety
+/// - Marked with `@MainActor` to ensure all property updates occur on the main thread
+/// - Conforms to `Sendable` for safe concurrency
+/// - Automatically observable via `@Observable` macro for SwiftUI integration
+///
+/// ## Usage Example
+/// ```swift
+/// @main
+/// struct MyApp: App {
+///     let healthKitData = HealthKitData()
+///     let healthKitManager = HealthKitManager()
+///
+///     var body: some Scene {
+///         WindowGroup {
+///             ContentView()
+///                 .environment(healthKitData)
+///                 .environment(healthKitManager)
+///         }
+///     }
+/// }
+///
+/// // In a view
+/// @Environment(HealthKitData.self) private var healthKitData
+/// let chartData = ChartHelper.convert(data: healthKitData.stepData)
+/// ```
+///
+/// - Note: This class should be instantiated once at the app level and injected via SwiftUI environment.
+/// - Important: All properties are updated by `HealthKitManager` after successful data fetches.
+/// - SeeAlso: `HealthKitManager` for methods that populate these properties.
 @Observable
 @MainActor
 final class HealthKitData: Sendable {
+    
+    /// Cached array of step count metrics.
+    ///
+    /// Each metric contains a date and the corresponding step count value.
+    /// This array is automatically updated when new data is fetched via
+    /// `HealthKitManager.fetchStepCount()`.
+    ///
+    /// - Note: Typically contains 28 days of historical step data.
+    /// - SeeAlso: `HealthKitManager.fetchStepCount()`
     var stepData: [HealthMetric] = []
+    
+    /// Cached array of body weight metrics.
+    ///
+    /// Each metric contains a date and the corresponding weight value in pounds.
+    /// This array is automatically updated when new data is fetched via
+    /// `HealthKitManager.fetchWeightsCount(daysBack:)`.
+    ///
+    /// - Note: Typically contains 28 days of historical weight data for line charts.
+    /// - SeeAlso: `HealthKitManager.fetchWeightsCount(daysBack:)`
     var weightData: [HealthMetric] = []
+    
+    /// Cached array of weight metrics used for calculating daily differences.
+    ///
+    /// This array stores one additional day of weight data (29 days) compared to
+    /// `weightData` to enable day-to-day difference calculations. The extra day
+    /// provides the baseline for computing the first day's differential.
+    ///
+    /// - Note: Contains 29 days of data to calculate 28 days of weight differences.
+    /// - SeeAlso: `ChartHelper.averageDailyWeightDiffs(for:)` for the calculation logic.
     var weightDiffData: [HealthMetric] = []
 }
 
@@ -23,18 +90,26 @@ final class HealthKitData: Sendable {
 /// - Requesting and managing HealthKit permissions
 /// - Fetching health data (step counts and body weight)
 /// - Adding new health data entries
-/// - Managing cached health metrics
 ///
-/// The class uses Swift's `@Observable` macro to enable automatic UI updates when data changes.
+/// ## Architecture
+/// As of Swift 6, this class is designed to be stateless and thread-safe:
+/// - Conforms to `Sendable` for safe concurrency
+/// - Does not store mutable state (data is stored in `HealthKitData`)
+/// - All methods are async and can be called from any context
 ///
 /// ## Usage Example
 /// ```swift
 /// let healthManager = HealthKitManager()
-/// let steps = try await healthManager.fetchStepCount()
+/// let healthData = HealthKitData()
+///
+/// // Fetch and store data
+/// healthData.stepData = try await healthManager.fetchStepCount()
+/// healthData.weightData = try await healthManager.fetchWeightsCount(daysBack: 28)
 /// ```
 ///
 /// - Note: This class requires HealthKit authorization before performing any operations.
 /// - Important: All fetch and add methods are asynchronous and may throw errors.
+/// - SeeAlso: `HealthKitData` for the companion data storage class.
 @Observable
 final class HealthKitManager: Sendable {
     
