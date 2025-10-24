@@ -1,14 +1,31 @@
 //
-//  ChartMath.swift
+//  ChartHelper.swift
 //  Step Counter
 //
-//  Created by Kuba Milcarz on 14/10/2025.
+//  Created by Kuba Milcarz on 22/10/2025.
 //
 
 import Algorithms
 import Foundation
 
-struct ChartMath {
+struct ChartHelper {
+    static func convert(data: [HealthMetric]) -> [DateValueChartData] {
+        data.map { .init(date: $0.date, value: $0.value) }
+    }
+    
+    static func averageValue(for data: [DateValueChartData]) -> Double {
+        guard !data.isEmpty else { return 0 }
+        let total = data.reduce(0) { $0 + $1.value }
+        return total/Double(data.count)
+    }
+    
+    static func parseSelectedData(from data: [DateValueChartData], in selectedDate: Date?) -> DateValueChartData? {
+        guard let selectedDate else { return nil }
+        
+        return data.first(where: {
+            Calendar.current.isDate(selectedDate, inSameDayAs: $0.date)
+        })
+    }
     
     static func averageWeekdayCount(for metric: [HealthMetric]) -> [DateValueChartData] {
         let sortedByWeekday = metric.sorted(using: KeyPathComparator(\.date.weekdayInt))
