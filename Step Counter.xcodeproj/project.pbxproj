@@ -11,12 +11,28 @@
 		C84992B42E9EE9B100AF782B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = C84992B32E9EE9B100AF782B /* Algorithms */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		C8021FDF2EAC123300ECD629 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C87BCF6B2E97FE2B002A5510 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C87BCF722E97FE2B002A5510;
+			remoteInfo = "Step Counter";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		C8021F3F2EAC0DD500ECD629 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		C8021FDB2EAC123300ECD629 /* Step Counter Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Step Counter Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C87BCF732E97FE2B002A5510 /* Step Counter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Step Counter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		C8021FDC2EAC123300ECD629 /* Step Counter Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Step Counter Tests";
+			sourceTree = "<group>";
+		};
 		C87BCF752E97FE2B002A5510 /* Step Counter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Step Counter";
@@ -25,6 +41,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C8021FD82EAC123300ECD629 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C87BCF702E97FE2B002A5510 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -42,6 +65,7 @@
 				C87BCF742E97FE2B002A5510 /* Products */,
 				C87BCF752E97FE2B002A5510 /* Step Counter */,
 				C8021F3F2EAC0DD500ECD629 /* README.md */,
+				C8021FDC2EAC123300ECD629 /* Step Counter Tests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -49,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				C87BCF732E97FE2B002A5510 /* Step Counter.app */,
+				C8021FDB2EAC123300ECD629 /* Step Counter Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -56,6 +81,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C8021FDA2EAC123300ECD629 /* Step Counter Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C8021FE32EAC123300ECD629 /* Build configuration list for PBXNativeTarget "Step Counter Tests" */;
+			buildPhases = (
+				C8021FD72EAC123300ECD629 /* Sources */,
+				C8021FD82EAC123300ECD629 /* Frameworks */,
+				C8021FD92EAC123300ECD629 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C8021FE02EAC123300ECD629 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C8021FDC2EAC123300ECD629 /* Step Counter Tests */,
+			);
+			name = "Step Counter Tests";
+			packageProductDependencies = (
+			);
+			productName = "Step Counter Tests";
+			productReference = C8021FDB2EAC123300ECD629 /* Step Counter Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		C87BCF722E97FE2B002A5510 /* Step Counter */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C87BCF7E2E97FE2D002A5510 /* Build configuration list for PBXNativeTarget "Step Counter" */;
@@ -89,6 +137,10 @@
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					C8021FDA2EAC123300ECD629 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = C87BCF722E97FE2B002A5510;
+					};
 					C87BCF722E97FE2B002A5510 = {
 						CreatedOnToolsVersion = 26.0;
 					};
@@ -112,11 +164,19 @@
 			projectRoot = "";
 			targets = (
 				C87BCF722E97FE2B002A5510 /* Step Counter */,
+				C8021FDA2EAC123300ECD629 /* Step Counter Tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C8021FD92EAC123300ECD629 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C87BCF712E97FE2B002A5510 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -128,6 +188,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C8021FD72EAC123300ECD629 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C87BCF6F2E97FE2B002A5510 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -137,7 +204,57 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		C8021FE02EAC123300ECD629 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C87BCF722E97FE2B002A5510 /* Step Counter */;
+			targetProxy = C8021FDF2EAC123300ECD629 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		C8021FE12EAC123300ECD629 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7AGNJTPT6V;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kubamilcarz.Step-Counter-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Step Counter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Step Counter";
+			};
+			name = Debug;
+		};
+		C8021FE22EAC123300ECD629 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7AGNJTPT6V;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kubamilcarz.Step-Counter-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Step Counter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Step Counter";
+			};
+			name = Release;
+		};
 		C87BCF7C2E97FE2D002A5510 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -334,6 +451,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C8021FE32EAC123300ECD629 /* Build configuration list for PBXNativeTarget "Step Counter Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C8021FE12EAC123300ECD629 /* Debug */,
+				C8021FE22EAC123300ECD629 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C87BCF6E2E97FE2B002A5510 /* Build configuration list for PBXProject "Step Counter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
