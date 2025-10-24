@@ -33,11 +33,11 @@ enum ChartType {
     
     var title: String {
         switch self {
-        case .stepBar(let average):
+        case .stepBar:
             "Steps"
         case .stepWeekdayPie:
             "Averages"
-        case .weightLine(let average):
+        case .weightLine:
             "Weight"
         case .weightDiffBar:
             "Average Weight Change"
@@ -65,6 +65,19 @@ enum ChartType {
             "Avg: \(average.formatted(.number.precision(.fractionLength(1)))) lbs"
         case .weightDiffBar:
             "Per Weekday (Last 28 Days)"
+        }
+    }
+    
+    var accessabilityLabel: String {
+        switch self {
+        case .stepBar(let average):
+            "Bar chart, step count, last 28 days, average steps per day: \(average.formatted())"
+        case .stepWeekdayPie:
+            "Pie chart, average steps per weekday"
+        case .weightLine(let average):
+            "Line chart, weight, average weight: \(average.formatted(.number.precision(.fractionLength(1)))) pounds,  goal weight: 155 pounds"
+        case .weightDiffBar:
+            "Bar chart, average weight difference per weekday"
         }
     }
 }
@@ -101,6 +114,7 @@ struct ChartContainer<Content: View>: View {
         }
         .foregroundStyle(.secondary)
         .padding(.bottom, 12)
+        .accessibilityHint("Tap for data in list view")
     }
     
     private var titleView: some View {
@@ -114,6 +128,9 @@ struct ChartContainer<Content: View>: View {
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityLabel(chartType.accessabilityLabel)
+        .accessibilityElement(children: .ignore)
     }
 }
 

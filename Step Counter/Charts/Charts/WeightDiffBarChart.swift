@@ -31,12 +31,16 @@ struct WeightDiffBarChart: View {
                 }
                 
                 ForEach(chartData) { weightDiff in
-                    BarMark(
-                        x: .value("Day", weightDiff.date, unit: .day),
-                        y: .value("Value", weightDiff.value)
-                    )
-                    .foregroundStyle(weightDiff.value >= 0 ? .indigo : .mint)
-                    .opacity(rawSelectedDate == nil || weightDiff.date == selectedData?.date ? 1 : 0.3)
+                    Plot {
+                        BarMark(
+                            x: .value("Day", weightDiff.date, unit: .day),
+                            y: .value("Value", weightDiff.value)
+                        )
+                        .foregroundStyle(weightDiff.value >= 0 ? .indigo : .mint)
+                        .opacity(rawSelectedDate == nil || weightDiff.date == selectedData?.date ? 1 : 0.3)
+                    }
+                    .accessibilityLabel(weightDiff.date.weekdayTitle)
+                    .accessibilityValue("\(weightDiff.value.formatted(.number.precision(.fractionLength(1)).sign(strategy: .always()))) pounds")
                 }
             }
             .frame(height: 150)
