@@ -41,7 +41,7 @@ struct HealthKitPermissionPrimingView: View {
             Button("Connect Apple Health") {
                 showHealthKitPermissions = true
             }
-            .buttonStyle(.borderedProminent)
+            .prominentButton(.pink)
             .tint(.pink)
         }
         .padding(30)
