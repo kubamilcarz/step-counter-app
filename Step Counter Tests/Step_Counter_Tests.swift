@@ -5,6 +5,7 @@
 //  Created by Kuba Milcarz on 24/10/2025.
 //
 
+import Foundation
 import Testing
 @testable import Step_Counter
 
@@ -14,5 +15,4 @@ struct Step_Counter_Tests {
         let array: [Double] = [2.0, 3.1, 0.45, 1.84]
         #expect(array.average == 1.8475)
     }
-
 }
