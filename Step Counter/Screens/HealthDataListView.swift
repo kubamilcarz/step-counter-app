@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HealthDataListView: View {
+    @Environment(HealthKitData.self) private var healthKitData
     @Environment(HealthKitManager.self) private var healthKitManager
     
     var metric: HealthMetricContext
@@ -20,7 +21,7 @@ struct HealthDataListView: View {
     @State private var writeError: STError = .noData
         
     var listData: [HealthMetric] {
-        metric == .steps ? healthKitManager.stepData : healthKitManager.weightData
+        metric == .steps ? healthKitData.stepData : healthKitData.weightData
     }
 
     var body: some View {
@@ -99,14 +100,14 @@ struct HealthDataListView: View {
             do {
                 if metric == .steps {
                     try await healthKitManager.addStepData(for: addDataDate, value: value)
-                    healthKitManager.stepData = try await healthKitManager.fetchStepCount()
+                    healthKitData.stepData = try await healthKitManager.fetchStepCount()
                 } else {
                     try await healthKitManager.addWeightData(for: addDataDate, value: value)
                     async let weightsforLineChart = healthKitManager.fetchWeightsCount(daysBack: 28)
                     async let weightsForDiffChart = healthKitManager.fetchWeightsCount(daysBack: 29)
                     
-                    healthKitManager.weightData = try await weightsforLineChart
-                    healthKitManager.weightDiffData = try await weightsForDiffChart
+                    healthKitData.weightData = try await weightsforLineChart
+                    healthKitData.weightDiffData = try await weightsForDiffChart
                 }
                 
                 showAddData = false
