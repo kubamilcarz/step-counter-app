@@ -32,8 +32,11 @@ struct HealthDataListView: View {
                 Text(data.date, format: .dateTime.month().day().year())
                     .accessibilityLabel(data.date.accessibilityDate)
             }
+            .listRowBackground(Color(.secondarySystemBackground).opacity(0.35))
             .accessibilityElement(children: .combine)
         }
+        .scrollContentBackground(.hidden)
+        .gradientBackground(using: metric.color)
         .navigationTitle(metric.title)
         .overlay {
             if listData.isEmpty {
@@ -134,6 +137,7 @@ struct HealthDataListView: View {
         )
     }
     .environment(HealthKitManager())
+    .environment(HealthKitData())
 }
 
 #Preview("Weight List") {
@@ -143,4 +147,5 @@ struct HealthDataListView: View {
         )
     }
     .environment(HealthKitManager())
+    .environment(HealthKitData())
 }

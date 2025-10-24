@@ -28,4 +28,9 @@ extension View {
     func prominentButton(_ color: Color) -> some View {
         modifier(ProminentButton(color: color))
     }
+    
+    func gradientBackground(using color: Color) -> some View {
+        self
+            .background(LinearGradient(colors: [color.opacity(0.25), color.opacity(0)], startPoint: .topLeading, endPoint: .bottomTrailing))
+    }
 }
