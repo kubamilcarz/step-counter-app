@@ -9,11 +9,52 @@ import Foundation
 import Testing
 @testable import Step_Counter
 
-struct Step_Counter_Tests {
-
-    @Test func arrayAverages() async throws {
+@Suite("Extensions Tests")
+struct ExtensionsTests {
+    
+    // MARK: - Array Extension Tests
+    
+    @Test func arrayAverage_withMultipleValues() {
         let array: [Double] = [2.0, 3.1, 0.45, 1.84]
         #expect(array.average == 1.8475)
+    }
+    
+    @Test func arrayAverage_withSingleValue() {
+        let array: [Double] = [42.0]
+        #expect(array.average == 42.0)
+    }
+    
+    @Test func arrayAverage_withEmptyArray() {
+        let array: [Double] = []
+        #expect(array.average == 0.0)
+    }
+    
+    @Test func arrayAverage_withMixedSignNumbers() {
+        let array: [Double] = [-5.0, 0.0, 5.0]
+        #expect(array.average == 0.0)
+    }
+    
+    // MARK: - Date Extension Tests
+    @Test func dateWeekdayInt_monday() {
+        // June 9, 2025 is a Monday
+        let date = Calendar.current.date(from: .init(year: 2025, month: 6, day: 9))!
+        #expect(date.weekdayInt == 2)
+    }
+    
+    @Test func dateWeekdayTitle_returnsFullWeekdayName() {
+        // June 13, 2025 is a Friday
+        let date = Calendar.current.date(from: .init(year: 2025, month: 6, day: 13))!
+        #expect(date.weekdayTitle == "Friday")
+    }
+    
+    @Test func dateWeekdayTitle_returnsDifferentDays() {
+        let monday = Calendar.current.date(from: .init(year: 2025, month: 6, day: 9))!
+        let tuesday = Calendar.current.date(from: .init(year: 2025, month: 6, day: 10))!
+        let sunday = Calendar.current.date(from: .init(year: 2025, month: 6, day: 15))!
+        
+        #expect(monday.weekdayTitle == "Monday")
+        #expect(tuesday.weekdayTitle == "Tuesday")
+        #expect(sunday.weekdayTitle == "Sunday")
     }
 }
 
