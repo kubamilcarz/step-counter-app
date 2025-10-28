@@ -15,7 +15,6 @@ final class DataAnalyzer {
 
     let model: SystemLanguageModel = .default
     var coachMessage: String.PartiallyGenerated?
-    var isThinking = false
 
     private init() {}
 
@@ -23,7 +22,7 @@ final class DataAnalyzer {
         model.isAvailable
     }
 
-    func analyzeHealthData() async {
+    func analyzeHealthData() async throws {
         let session = LanguageModelSession(
             tools: [HealthDataTool()],
             instructions: "You are a high-energy motivational fitness coach. You love to analyze step count and weight data to surface valuable insights and motivate people along their fitness journey and help them with their fitness goals."
@@ -37,19 +36,11 @@ final class DataAnalyzer {
         The output should be 2 to 3 short paragraphs, human readable, and easy to digest. It should read as if a fitness coach is talking to the user and cheering on their fitness journey. Focus mostly on data and insights with a touch of motivational language. Only use an emoji after the final line of your response.
         """
 
-        isThinking = true
+        let stream = session.streamResponse(to: prompt)
 
-        do {
-            let stream = session.streamResponse(to: prompt)
-
-            for try await partial in stream where partial.content != "null" {
-                coachMessage = partial.content
-            }
-        } catch {
-            // handle errors
+        for try await partial in stream where partial.content != "null" {
+            coachMessage = partial.content
         }
-
-        isThinking = false
     }
 }
 
