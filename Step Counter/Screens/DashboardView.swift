@@ -31,10 +31,12 @@ enum HealthMetricContext: CaseIterable, Identifiable {
 struct DashboardView: View {
     @Environment(HealthKitData.self) private var healthKitData
     @Environment(HealthKitManager.self) private var healthKitManager
+    @Namespace private var zoomTransition
     
     @State private var selectedStat: HealthMetricContext = .steps
     @State private var showPermissionPriming: Bool = false
     @State private var showAlert: Bool = false
+    @State private var showCoachSheet: Bool = false
     @State private var fetchError: STError = .noData
     
     var navbarTint: Color {
@@ -89,10 +91,24 @@ struct DashboardView: View {
             } content: {
                 HealthKitPermissionPrimingView()
             }
+            .backportCoachSheet(isPresented: $showCoachSheet, namespace: zoomTransition)
             .alert(isPresented: $showAlert, error: fetchError) { _ in
                 // actions
             } message: { fetchError in
                 Text(fetchError.failureReason)
+            }
+            .toolbar {
+                if #available(iOS 26.0, *) {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        if DataAnalyzer.shared.isAvailable {
+                            Button("Analyze data", systemImage: "apple.intelligence") {
+                                showCoachSheet = true
+                                Task { await DataAnalyzer.shared.analyzeHealthData() }
+                            }
+                        }
+                    }
+                    .matchedTransitionSource(id: "coachView", in: zoomTransition)
+                }
             }
         }
         .tint(navbarTint)
