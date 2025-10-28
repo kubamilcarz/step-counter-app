@@ -123,3 +123,5 @@ blankLineAfterSwitchCase,\
 
 # MARK: - File Exclusions
 --exclude Pods,Carthage,Generated,*.generated.swift,DerivedData
+
+--swiftversion 6.2
