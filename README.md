@@ -1,13 +1,16 @@
 # Step Tracker
 Step Tracker integrates Apple Health to show your latest step and weight data in animated, interactive Swift Charts. You can also see your average steps and weight gain/loss for each weekday for the past 28 days.
 
-Step Tracker also allows you to upload new step or weight data to the Apple Health app.
+Step Tracker also allows you to upload new step or weight data to the Apple Health app. The 1.2.0 release layered on the Apple “Liquid Glass” dashboard treatment, introduced a foundation-model powered AI coach for streaming insights, and tightened Swift 6.2 backwards-compatibility by keeping HealthKit updates main-actor safe.
+
 
 # Technologies Used
 * SwiftUI
 * HealthKit
 * Swift Charts
 * Swift Algorithms
+* Foundation Models (Coach insights)
+* Swift Concurrency (Swift 6.2 main-actor isolation)
 * DocC
 * Git & GitHub
 
@@ -66,3 +69,6 @@ Although it's a simple portfolio project, I've implemented the following:
 * Privacy Manifest
 * Code documentation (DocC)
 * Project organization
+* Apple “Liquid Glass” dashboard styling
+* AI coach powered by foundation models
+* Swift 6.2 backwards-compatibility guardrails
