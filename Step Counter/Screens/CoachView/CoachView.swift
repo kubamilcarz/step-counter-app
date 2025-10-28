@@ -16,9 +16,7 @@ struct CoachView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                Text(viewModel.coachMessage ?? "")
-                    .contentTransition(.interpolate)
-                    .animation(.snappy, value: viewModel.coachMessage)
+                content
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
             }
@@ -45,10 +43,57 @@ struct CoachView: View {
                 }
             }
             .overlay {
-                if viewModel.isThinking {
+                if viewModel.state == .loading {
                     thinkingOverlay
                 }
             }
+        }
+        .task {
+            viewModel.onAppear()
+        }
+    }
+
+    @ViewBuilder private var content: some View {
+        switch viewModel.state {
+        case .initial, .loading:
+            placeholderView
+        case .success:
+            messageView
+        case .error:
+            errorView
+        }
+    }
+
+    private var messageView: some View {
+        Text(viewModel.coachMessage ?? "")
+            .contentTransition(.interpolate)
+            .animation(.snappy, value: viewModel.coachMessage)
+    }
+
+    private var placeholderView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Coach Craig is preparing insights.")
+                .font(.headline)
+            Text("Hang tight while we analyze your recent activity.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private var errorView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Coach Craig hit a snag.")
+                .font(.headline)
+
+            Text(viewModel.errorMessage ?? "Please try again in a moment.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Button("Try Again", systemImage: "arrow.clockwise") {
+                viewModel.onRetryButtonTapped()
+            }
+            .prominentButton(.pink)
+            .disabled(viewModel.state == .loading)
         }
     }
 

@@ -104,7 +104,6 @@ struct DashboardView: View {
                         if DataAnalyzer.shared.isAvailable {
                             Button("Analyze data", systemImage: "apple.intelligence") {
                                 showCoachSheet = true
-                                Task { await DataAnalyzer.shared.analyzeHealthData() }
                             }
                         }
                     }

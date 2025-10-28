@@ -31,10 +31,11 @@ struct BackportCoachSheet: ViewModifier {
         if #available(iOS 26.0, *) {
             content
                 .sheet(isPresented: $isPresented) {
-                    DataAnalyzer.shared.coachMessage = ""
+                    DataAnalyzer.shared.coachMessage = nil
                 } content: {
                     CoachView(viewModel: CoachViewModel(analyzer: DataAnalyzer.shared))
-                        .presentationDetents([.fraction(0.8)])
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
                         .navigationTransition(.zoom(sourceID: "coachView", in: namespace))
                 }
         } else {
