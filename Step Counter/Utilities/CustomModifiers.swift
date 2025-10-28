@@ -33,7 +33,7 @@ struct BackportCoachSheet: ViewModifier {
                 .sheet(isPresented: $isPresented) {
                     DataAnalyzer.shared.coachMessage = ""
                 } content: {
-                    CoachView()
+                    CoachView(viewModel: CoachViewModel(analyzer: DataAnalyzer.shared))
                         .presentationDetents([.fraction(0.8)])
                         .navigationTransition(.zoom(sourceID: "coachView", in: namespace))
                 }

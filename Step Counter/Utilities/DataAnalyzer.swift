@@ -44,12 +44,12 @@ final class DataAnalyzer {
 
             for try await partial in stream where partial.content != "null" {
                 coachMessage = partial.content
+                isThinking = false
             }
         } catch {
+            isThinking = false
             // handle errors
         }
-
-        isThinking = false
     }
 }
 
