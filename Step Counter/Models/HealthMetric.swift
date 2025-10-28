@@ -14,10 +14,10 @@ import Foundation
 struct HealthMetric: Identifiable {
     /// Unique identifier for SwiftUI collections.
     let id = UUID()
-    
+
     /// Date of the measurement (typically start of day for daily metrics).
     let date: Date
-    
+
     /// Metric value (steps as count, weight in pounds, etc.).
     let value: Double
 }

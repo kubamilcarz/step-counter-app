@@ -10,7 +10,7 @@ import SwiftUI
 struct ChartContainer<Content: View>: View {
     let chartType: ChartType
     @ViewBuilder var content: () -> Content
-    
+
     var body: some View {
         VStack {
             if chartType.isNav {
@@ -20,7 +20,7 @@ struct ChartContainer<Content: View>: View {
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 12)
             }
-            
+
             content()
         }
         .padding()
@@ -33,14 +33,14 @@ struct ChartContainer<Content: View>: View {
             .fill(Color(.secondarySystemBackground).gradient.opacity(0.5))
         )
     }
-    
+
     private var navigationLinkView: some View {
         NavigationLink(value: chartType.context) {
             HStack {
                 titleView
-                
+
                 Spacer()
-                
+
                 Image(systemName: "chevron.forward")
             }
         }
@@ -48,13 +48,13 @@ struct ChartContainer<Content: View>: View {
         .padding(.bottom, 12)
         .accessibilityHint("Tap for data in list view")
     }
-    
+
     private var titleView: some View {
         VStack(alignment: .leading) {
             Label(chartType.title, systemImage: chartType.symbol)
                 .font(.title3.bold())
                 .foregroundStyle(chartType.context.color)
-            
+
             Text(chartType.subtitle)
                 .font(.caption)
                 .foregroundStyle(.secondary)

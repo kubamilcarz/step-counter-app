@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct Step_CounterApp: App {
+struct StepCounterApp: App {
     let healthKitData = HealthKitData()
     let healthKitManager = HealthKitManager()
 

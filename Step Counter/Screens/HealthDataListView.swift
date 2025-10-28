@@ -11,16 +11,16 @@ struct HealthDataListView: View {
     @Environment(HealthKitData.self) private var healthKitData
     @Environment(HealthKitManager.self) private var healthKitManager
     @Namespace private var zoomTransition
-    
+
     var metric: HealthMetricContext
-    
-    @State private var showAddData: Bool = false
+
+    @State private var showAddData = false
     @State private var addDataDate: Date = .now
-    @State private var valueToAdd: String = ""
-    
-    @State private var showAlert: Bool = false
+    @State private var valueToAdd = ""
+
+    @State private var showAlert = false
     @State private var writeError: STError = .noData
-        
+
     var listData: [HealthMetric] {
         metric == .steps ? healthKitData.stepData : healthKitData.weightData
     }
@@ -41,7 +41,10 @@ struct HealthDataListView: View {
         .navigationTitle(metric.title)
         .overlay {
             if listData.isEmpty {
-                ContentUnavailableView("No \(metric.title) to Display", systemImage: metric == .steps ? "figure.walk" : "figure")
+                ContentUnavailableView(
+                    "No \(metric.title) to Display",
+                    systemImage: metric == .steps ? "figure.walk" : "figure"
+                )
             }
         }
         .sheet(isPresented: $showAddData) {
@@ -90,12 +93,13 @@ struct HealthDataListView: View {
             .scrollContentBackground(.hidden)
             .alert(isPresented: $showAlert, error: writeError) { writeError in
                 switch writeError {
-                case .sharingDenied(_):
+                case .sharingDenied:
                     Button("Settings") {
                         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                     }
-                    
-                    Button("Cancel", role: .cancel) { }
+
+                    Button("Cancel", role: .cancel) {}
+
                 default:
                     EmptyView()
                 }
@@ -127,12 +131,11 @@ struct HealthDataListView: View {
                             showAddData = false
                         }
                     }
-                    
                 }
             }
         }
     }
-        
+
     private func addDataToHealthKit() {
         guard let value = Double(valueToAdd) else {
             writeError = .invalidValue
@@ -140,7 +143,7 @@ struct HealthDataListView: View {
             valueToAdd = ""
             return
         }
-        
+
         Task {
             do {
                 if metric == .steps {
@@ -150,11 +153,11 @@ struct HealthDataListView: View {
                     try await healthKitManager.addWeightData(for: addDataDate, value: value)
                     async let weightsforLineChart = healthKitManager.fetchWeightsCount(daysBack: 28)
                     async let weightsForDiffChart = healthKitManager.fetchWeightsCount(daysBack: 29)
-                    
+
                     healthKitData.weightData = try await weightsforLineChart
                     healthKitData.weightDiffData = try await weightsForDiffChart
                 }
-                
+
                 showAddData = false
             } catch let STError.sharingDenied(quantityType: type) {
                 writeError = .sharingDenied(quantityType: type)

@@ -12,7 +12,7 @@ struct HealthKitPermissionPrimingView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(HealthKitManager.self) private var healthKitManager
 
-    @State private var showHealthKitPermissions: Bool = false
+    @State private var showHealthKitPermissions = false
 
     private let description = """
     This app displays your step and weight data in interactive charts.
@@ -23,7 +23,7 @@ struct HealthKitPermissionPrimingView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Spacer()
-            
+
             Image(.appleHealth)
                 .resizable()
                 .scaledToFit()
@@ -37,7 +37,7 @@ struct HealthKitPermissionPrimingView: View {
 
             Text(description)
                 .foregroundStyle(.secondary)
-            
+
             Spacer()
         }
         .padding(30)

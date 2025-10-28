@@ -9,27 +9,26 @@ import Charts
 import SwiftUI
 
 struct WeightDiffBarChart: View {
-    
     var chartData: [DateValueChartData]
-    
+
     @State private var rawSelectedDate: Date?
     @State private var selectedDay: Date?
-    
+
     var minValue: Double {
         chartData.map(\.value).min() ?? 0
     }
-    
+
     var selectedData: DateValueChartData? {
         ChartHelper.parseSelectedData(from: chartData, in: rawSelectedDate)
     }
-    
+
     var body: some View {
         ChartContainer(chartType: .weightDiffBar) {
             Chart {
                 if let selectedData {
                     ChartAnnotationView(data: selectedData, context: .weight)
                 }
-                
+
                 ForEach(chartData) { weightDiff in
                     Plot {
                         BarMark(
@@ -41,7 +40,9 @@ struct WeightDiffBarChart: View {
                         .opacity(rawSelectedDate == nil || weightDiff.date == selectedData?.date ? 1 : 0.3)
                     }
                     .accessibilityLabel(weightDiff.date.weekdayTitle)
-                    .accessibilityValue("\(weightDiff.value.formatted(.number.precision(.fractionLength(1)).sign(strategy: .always()))) pounds")
+                    .accessibilityValue(
+                        "\(weightDiff.value.formatted(.number.precision(.fractionLength(1)).sign(strategy: .always()))) pounds"
+                    )
                 }
             }
             .frame(height: 150)
@@ -55,13 +56,17 @@ struct WeightDiffBarChart: View {
                 AxisMarks { value in
                     AxisGridLine()
                         .foregroundStyle(.secondary.opacity(0.3))
-                    
+
                     AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
                 }
             }
             .overlay {
                 if chartData.isEmpty {
-                    ChartEmptyView(title: "No Data", systemImage: "chart.bar", description: "There is no step count data from the Health App.")
+                    ChartEmptyView(
+                        title: "No Data",
+                        systemImage: "chart.bar",
+                        description: "There is no step count data from the Health App."
+                    )
                 }
             }
         }

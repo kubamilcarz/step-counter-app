@@ -1,0 +1,171 @@
+# MARK: - File Organization
+excluded: # Paths to ignore during linting (takes precedence over included)
+  - Carthage
+  - Pods
+  - .build
+  - Generated
+  - Vendor
+  - fastlane
+  - R.generated.swift
+  - "*.generated.swift"
+  - "*/XCTestManifests.swift"
+  - "*CoreDataProperties.swift"
+  - DerivedSources
+  - "DerivedSources/*"
+  - GeneratedTests
+  - "*/Step_Counter_Tests.swift"
+
+# MARK: - Analyzer Rules (Opt-in only, requires `swiftlint analyze`)
+analyzer_rules:
+  - unused_declaration
+  - unused_import
+  - explicit_self
+
+# MARK: - Opt-in Rules (Not enabled by default)
+opt_in_rules:
+  - array_init
+  - balanced_xctest_lifecycle
+  - closure_end_indentation
+  - closure_spacing
+  - collection_alignment
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - contains_over_first_not_nil
+  - contains_over_range_nil_comparison
+  - discouraged_object_literal
+  - empty_collection_literal
+  - empty_count
+  - empty_string
+  - empty_xctest_method
+  - enum_case_associated_values_count
+  - explicit_init
+  - extension_access_modifier
+  - fallthrough
+  - fatal_error_message
+  - file_header
+  - first_where
+  - flatmap_over_map_reduce
+  - function_default_parameter_at_end
+  - ibinspectable_in_extension
+  - identical_operands
+  - implicit_return
+  - joined_default_parameter
+  - last_where
+  - legacy_multiple
+  - lower_acl_than_parent
+  - modifier_order
+  - multiline_literal_brackets
+  - multiline_parameters
+  - multiline_parameters_brackets
+  - nimble_operator
+  - nslocalizedstring_require_bundle
+  - number_separator
+  - object_literal
+  - operator_usage_whitespace
+  - optional_enum_case_matching
+  - overridden_super_call
+  - override_in_extension
+  - pattern_matching_keywords
+  - prefer_self_type_over_type_of_self
+  - prefer_zero_over_explicit_init
+  - prefixed_toplevel_constant
+  - private_action
+  - private_outlet
+  - prohibited_interface_builder
+  - prohibited_super_call
+  - quick_discouraged_call
+  - quick_discouraged_focused_test
+  - quick_discouraged_pending_test
+  - reduce_into
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - required_enum_case
+  - single_test_class
+  - sorted_imports
+  - static_operator
+  - strict_fileprivate
+  - strong_iboutlet
+  - toggle_bool
+  - unavailable_function
+  - unneeded_parentheses_in_closure_argument
+  - unowned_variable_capture
+  - untyped_error_in_catch
+  - vertical_whitespace_closing_braces
+  - xct_specific_matcher
+  - yoda_condition
+
+# MARK: - Disabled Rules (Rules to turn off)
+disabled_rules:
+  - todo # Allow TODO comments
+  - blanket_disable_command # Allow blanket disable comments
+  - cyclomatic_complexity # Can be overly restrictive for some cases
+  - function_body_length # Let team discretion handle this
+  - type_body_length # Let team discretion handle this
+  - file_length # Some files legitimately need to be longer
+  - line_length # Handled by formatter, not linter
+  - identifier_name
+  - redundant_string_enum_value
+  - prefixed_toplevel_constant
+  - function_default_parameter_at_end
+  - object_literal
+
+# MARK: - Rule Configuration
+
+# Naming Rules
+type_name:
+  min_length: 3
+  max_length:
+    warning: 40
+    error: 50
+  excluded:
+    - T
+    - ID
+    - URL
+    - URI
+
+# Complexity Rules
+nesting:
+  type_level:
+    warning: 3
+    error: 6
+  function_level:
+    warning: 5
+    error: 10
+
+# Length Rules
+function_parameter_count:
+  warning: 6
+  error: 10
+
+large_tuple:
+  warning: 3
+  error: 4
+
+# Whitespace and Formatting
+trailing_whitespace:
+  ignores_empty_lines: true
+  ignores_comments: true
+
+vertical_whitespace:
+  max_empty_lines: 2
+
+# MARK: - Custom Rules
+custom_rules:
+  # No print statements in production code
+  #  no_print:
+  #    name: "No Print Statements"
+  #    regex: "\\bprint\\s*\\("
+  #    match_kinds: identifier
+  #    message: "Use proper logging instead of print statements"
+  #    severity: warning
+  #    excluded: ".*Tests\\.swift$"
+
+  # Encourage using isEmpty over count == 0
+  empty_count_check:
+    name: "Use isEmpty instead of count == 0"
+    regex: "\\.count\\s*==\\s*0"
+    message: "Use .isEmpty instead of .count == 0"
+    severity: warning
+
+# MARK: - Reporter Configuration
+reporter: "xcode"

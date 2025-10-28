@@ -9,22 +9,21 @@ import Charts
 import SwiftUI
 
 struct StepPieChart: View {
-    
     var chartData: [DateValueChartData]
-    
+
     @State private var rawSelectedChartValue: Double? = 0
     @State private var lastSelectedValue: Double = 0
     @State private var selectedDay: Date?
-    
+
     var selectedWeekday: DateValueChartData? {
         var total = 0.0
-        
+
         return chartData.first {
             total += $0.value
             return lastSelectedValue <= total
         }
     }
-    
+
     var body: some View {
         ChartContainer(chartType: .stepWeekdayPie) {
             Chart {
@@ -49,7 +48,7 @@ struct StepPieChart: View {
                     lastSelectedValue = oldValue ?? 0
                     return
                 }
-                
+
                 lastSelectedValue = newValue
             }
             .frame(height: 240)
@@ -62,7 +61,7 @@ struct StepPieChart: View {
                                 Text(selectedWeekday.date.weekdayTitle)
                                     .font(.title3.bold())
                                     .contentTransition(.identity)
-                                
+
                                 Text(selectedWeekday.value, format: .number.precision(.fractionLength(0)))
                                     .fontWeight(.medium)
                                     .foregroundStyle(.secondary)
@@ -76,14 +75,18 @@ struct StepPieChart: View {
             }
             .overlay {
                 if chartData.isEmpty {
-                    ChartEmptyView(title: "No Data", systemImage: "chart.pie", description: "There is no step count data from the Health App.")
+                    ChartEmptyView(
+                        title: "No Data",
+                        systemImage: "chart.pie",
+                        description: "There is no step count data from the Health App."
+                    )
                 }
             }
         }
         .sensoryFeedback(.selection, trigger: selectedDay)
         .onChange(of: selectedWeekday) { oldValue, newValue in
             guard let oldValue, let newValue else { return }
-            
+
             if oldValue.date.weekdayInt != newValue.date.weekdayInt {
                 selectedDay = newValue.date
             }

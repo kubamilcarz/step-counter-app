@@ -13,10 +13,10 @@ import Foundation
 struct DateValueChartData: Identifiable, Equatable {
     /// Unique identifier for SwiftUI collections.
     let id = UUID()
-    
+
     /// Date for the data point.
     let date: Date
-    
+
     /// Metric value (context-dependent: steps, weight, weight diff, etc.).
     let value: Double
 }
