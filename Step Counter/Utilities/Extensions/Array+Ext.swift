@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Array where Element == Double {
+extension [Double] {
     /// Computes the average of all elements. Returns 0 for empty arrays.
     var average: Double {
         guard !isEmpty else { return 0 }
