@@ -11,7 +11,7 @@ import SwiftUI
 struct CoachView: View {
     @Environment(\.dismiss) private var dismiss
     let analyzer = DataAnalyzer.shared
-    
+
     var body: some View {
         VStack(spacing: 20) {
             HStack {
@@ -20,12 +20,12 @@ struct CoachView: View {
                     .frame(width: 60, height: 60)
                     .scaledToFill()
                     .clipShape(.circle)
-                
+
                 Text("Coach Craig")
                     .font(.title3)
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 Button("OK", systemImage: "checkmark", role: .confirm) {
                     dismiss()
                 }
@@ -35,7 +35,7 @@ struct CoachView: View {
                 .glassEffect(.regular.tint(.pink).interactive())
             }
             .padding([.horizontal, .top])
-            
+
             ScrollView {
                 Text(analyzer.coachMessage ?? "")
                     .contentTransition(.interpolate)
@@ -51,7 +51,7 @@ struct CoachView: View {
                         .resizable()
                         .frame(width: 40, height: 40)
                         .symbolEffect(.pulse, options: .repeat(.continuous))
-                    
+
                     Text("Thinking...")
                         .font(.callout)
                 }

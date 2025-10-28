@@ -12,14 +12,14 @@ extension Date {
     var weekdayInt: Int {
         Calendar.current.component(.weekday, from: self)
     }
-    
+
     /// Full weekday name in user's locale (e.g., "Friday").
     var weekdayTitle: String {
-        self.formatted(.dateTime.weekday(.wide))
+        formatted(.dateTime.weekday(.wide))
     }
-    
+
     /// Accessibility-friendly date string showing month and day (e.g., "October 24").
     var accessibilityDate: String {
-        self.formatted(.dateTime.month(.wide).day())
+        formatted(.dateTime.month(.wide).day())
     }
 }

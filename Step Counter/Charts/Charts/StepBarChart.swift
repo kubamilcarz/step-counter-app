@@ -9,34 +9,33 @@ import Charts
 import SwiftUI
 
 struct StepBarChart: View {
-    
     var chartData: [DateValueChartData]
-    
+
     @State private var rawSelectedDate: Date?
     @State private var selectedDay: Date?
-    
+
     var selectedData: DateValueChartData? {
         ChartHelper.parseSelectedData(from: chartData, in: rawSelectedDate)
     }
-    
+
     var averageSteps: Int {
         Int(chartData.map(\.value).average)
     }
-    
+
     var body: some View {
         ChartContainer(chartType: .stepBar(average: averageSteps)) {
             Chart {
                 if let selectedData {
                     ChartAnnotationView(data: selectedData, context: .steps)
                 }
-                
+
                 if !chartData.isEmpty {
                     RuleMark(y: .value("Average", averageSteps.formatted()))
                         .foregroundStyle(.secondary)
                         .lineStyle(.init(lineWidth: 1, dash: [5]))
                         .accessibilityHidden(true)
                 }
-                
+
                 ForEach(chartData) { steps in
                     Plot {
                         BarMark(
@@ -62,13 +61,17 @@ struct StepBarChart: View {
                 AxisMarks { value in
                     AxisGridLine()
                         .foregroundStyle(.secondary.opacity(0.3))
-                    
+
                     AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
                 }
             }
             .overlay {
                 if chartData.isEmpty {
-                    ChartEmptyView(title: "No Data", systemImage: "chart.bar", description: "There is no step count data from the Health App.")
+                    ChartEmptyView(
+                        title: "No Data",
+                        systemImage: "chart.bar",
+                        description: "There is no step count data from the Health App."
+                    )
                 }
             }
         }

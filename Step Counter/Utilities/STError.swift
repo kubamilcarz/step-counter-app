@@ -11,19 +11,19 @@ import Foundation
 enum STError: LocalizedError {
     /// HealthKit authorization not yet requested.
     case authNotDetermined
-    
+
     /// No data available for the requested metric/period.
     case noData
-    
+
     /// General HealthKit operation failure.
     case unableToCompleteRequest
-    
+
     /// User denied write access for a specific metric.
     case sharingDenied(quantityType: String)
-    
+
     /// Input value failed validation.
     case invalidValue
-    
+
     /// Short error title for alerts.
     var errorDescription: String? {
         switch self {
@@ -39,7 +39,7 @@ enum STError: LocalizedError {
             "Invalid Value"
         }
     }
-    
+
     /// Detailed error message with recovery steps.
     var failureReason: String {
         switch self {

@@ -19,7 +19,7 @@ enum HealthMetricContext: CaseIterable, Identifiable {
         case .weight: "Weight"
         }
     }
-    
+
     var color: Color {
         switch self {
         case .steps: .pink
@@ -32,13 +32,13 @@ struct DashboardView: View {
     @Environment(HealthKitData.self) private var healthKitData
     @Environment(HealthKitManager.self) private var healthKitManager
     @Namespace private var zoomTransition
-    
+
     @State private var selectedStat: HealthMetricContext = .steps
-    @State private var showPermissionPriming: Bool = false
-    @State private var showAlert: Bool = false
-    @State private var showCoachSheet: Bool = false
+    @State private var showPermissionPriming = false
+    @State private var showAlert = false
+    @State private var showCoachSheet = false
     @State private var fetchError: STError = .noData
-    
+
     var navbarTint: Color {
         if #available(iOS 26.0, *) {
             .primary
@@ -46,7 +46,7 @@ struct DashboardView: View {
             selectedStat.color
         }
     }
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -57,21 +57,22 @@ struct DashboardView: View {
                         }
                     }
                     .pickerStyle(.segmented)
-                    
+
                     switch selectedStat {
                     case .steps:
                         StepBarChart(
                             chartData: ChartHelper.convert(data: healthKitData.stepData)
                         )
-                        
+
                         StepPieChart(
                             chartData: ChartHelper.averageWeekdayCount(for: healthKitData.stepData)
                         )
+
                     case .weight:
                         WeightLineChart(
                             chartData: ChartHelper.convert(data: healthKitData.weightData)
                         )
-                        
+
                         WeightDiffBarChart(
                             chartData: ChartHelper.averageDailyWeightDiffs(for: healthKitData.weightDiffData)
                         )
@@ -113,14 +114,14 @@ struct DashboardView: View {
         }
         .tint(navbarTint)
     }
-    
+
     private func fetchHealthData() {
         Task {
             do {
                 async let steps = healthKitManager.fetchStepCount()
                 async let weightsForLineChart = healthKitManager.fetchWeightsCount(daysBack: 28)
                 async let weightsForDiffBarChart = healthKitManager.fetchWeightsCount(daysBack: 29)
-                
+
                 healthKitData.stepData = try await steps
                 healthKitData.weightData = try await weightsForLineChart
                 healthKitData.weightDiffData = try await weightsForDiffBarChart
