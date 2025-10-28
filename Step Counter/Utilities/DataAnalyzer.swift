@@ -46,7 +46,7 @@ final class DataAnalyzer {
                 coachMessage = partial.content
             }
         } catch {
-            
+            // handle errors
         }
         
         isThinking = false
@@ -59,9 +59,7 @@ struct HealthDataTool: Tool {
     var description: String = "Fetches the user's recent step count and weight data from HealthKit."
     
     @Generable()
-    struct Arguments {
-        
-    }
+    struct Arguments {}
     
     func call(arguments: Arguments) async throws -> String {
         let healthKitManager = HealthKitManager()

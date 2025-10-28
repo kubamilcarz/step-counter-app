@@ -90,7 +90,7 @@ struct HealthDataListView: View {
             .scrollContentBackground(.hidden)
             .alert(isPresented: $showAlert, error: writeError) { writeError in
                 switch writeError {
-                case .sharingDenied(_):
+                case .sharingDenied:
                     Button("Settings") {
                         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                     }
@@ -127,7 +127,6 @@ struct HealthDataListView: View {
                             showAddData = false
                         }
                     }
-                    
                 }
             }
         }

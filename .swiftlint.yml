@@ -13,6 +13,7 @@ excluded: # Paths to ignore during linting (takes precedence over included)
   - DerivedSources
   - "DerivedSources/*"
   - GeneratedTests
+  - "*/Step_Counter_Tests.swift"
 
 # MARK: - Analyzer Rules (Opt-in only, requires `swiftlint analyze`)
 analyzer_rules:
@@ -151,13 +152,13 @@ vertical_whitespace:
 # MARK: - Custom Rules
 custom_rules:
   # No print statements in production code
-#  no_print:
-#    name: "No Print Statements"
-#    regex: "\\bprint\\s*\\("
-#    match_kinds: identifier
-#    message: "Use proper logging instead of print statements"
-#    severity: warning
-#    excluded: ".*Tests\\.swift$"
+  #  no_print:
+  #    name: "No Print Statements"
+  #    regex: "\\bprint\\s*\\("
+  #    match_kinds: identifier
+  #    message: "Use proper logging instead of print statements"
+  #    severity: warning
+  #    excluded: ".*Tests\\.swift$"
 
   # Encourage using isEmpty over count == 0
   empty_count_check:
@@ -165,6 +166,6 @@ custom_rules:
     regex: "\\.count\\s*==\\s*0"
     message: "Use .isEmpty instead of .count == 0"
     severity: warning
-    
+
 # MARK: - Reporter Configuration
 reporter: "xcode"

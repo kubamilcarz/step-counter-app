@@ -24,7 +24,7 @@ struct ChartHelper {
     static func averageValue(for data: [DateValueChartData]) -> Double {
         guard !data.isEmpty else { return 0 }
         let total = data.reduce(0) { $0 + $1.value }
-        return total/Double(data.count)
+        return total / Double(data.count)
     }
     
     // MARK: - Chart Interaction
@@ -53,7 +53,7 @@ struct ChartHelper {
         for array in weekdayArray {
             guard let firstValue = array.first else { continue }
             let total = array.reduce(0) { $0 + $1.value }
-            let avgSteps = total/Double(array.count)
+            let avgSteps = total / Double(array.count)
             
             weekdayChartData.append(.init(date: firstValue.date, value: avgSteps))
         }
@@ -88,7 +88,7 @@ struct ChartHelper {
         for array in weekdayArray {
             guard let firstValue = array.first else { continue }
             let total = array.reduce(0) { $0 + $1.value }
-            let avgWeightDiff = total/Double(array.count)
+            let avgWeightDiff = total / Double(array.count)
             
             weekdayChartData.append(.init(date: firstValue.date, value: avgWeightDiff))
         }

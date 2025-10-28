@@ -33,7 +33,7 @@ enum STError: LocalizedError {
             "No Write Access"
         case .unableToCompleteRequest:
             "Unable to Complete Request"
-        case .sharingDenied(_):
+        case .sharingDenied:
             "No Write Access"
         case .invalidValue:
             "Invalid Value"

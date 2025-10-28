@@ -69,7 +69,7 @@ struct WeightLineChart: View {
                 }
             }
             .chartYAxis {
-                AxisMarks { value in
+                AxisMarks { _ in
                     AxisGridLine()
                         .foregroundStyle(.secondary.opacity(0.3))
                     
@@ -89,7 +89,6 @@ struct WeightLineChart: View {
             }
         }
     }
-    
 }
 
 #Preview {

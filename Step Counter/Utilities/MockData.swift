@@ -23,7 +23,7 @@ struct MockData {
         var array: [HealthMetric] = []
         
         for i in 0..<20 {
-            let metric = HealthMetric(date: Calendar.current.date(byAdding: .day, value: -i, to: .now)!, value: .random(in: (160 + Double(i/3)...165 + Double(i/3))))
+            let metric = HealthMetric(date: Calendar.current.date(byAdding: .day, value: -i, to: .now)!, value: .random(in: (160 + Double(i / 3)...165 + Double(i / 3))))
             array.append(metric)
         }
         
