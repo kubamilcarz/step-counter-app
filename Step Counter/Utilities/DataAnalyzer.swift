@@ -14,6 +14,8 @@ final class DataAnalyzer {
     static let shared = DataAnalyzer()
     
     let model: SystemLanguageModel = .default
+    var coachMessage: String.PartiallyGenerated?
+    var isThinking: Bool = false
     
     private init() {}
     
@@ -35,11 +37,19 @@ final class DataAnalyzer {
         The output should be 2 to 3 short paragraphs, human readable, and easy to digest. It should read as if a fitness coach is talking to the user and cheering on their fitness journey. Focus mostly on data and insights with a touch of motivational language. Only use an emoji after the final line of your response.
         """
         
+        isThinking = true
+        
         do {
-            let response = try await session.respond(to: prompt)
+            let stream = session.streamResponse(to: prompt)
+            
+            for try await partial in stream where partial.content != "null" {
+                coachMessage = partial.content
+            }
         } catch {
             
         }
+        
+        isThinking = false
     }
 }
 
