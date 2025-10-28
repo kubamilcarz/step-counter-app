@@ -10,6 +10,7 @@ import SwiftUI
 struct HealthDataListView: View {
     @Environment(HealthKitData.self) private var healthKitData
     @Environment(HealthKitManager.self) private var healthKitManager
+    @Namespace private var zoomTransition
     
     var metric: HealthMetricContext
     
@@ -32,15 +33,43 @@ struct HealthDataListView: View {
                 Text(data.date, format: .dateTime.month().day().year())
                     .accessibilityLabel(data.date.accessibilityDate)
             }
+            .listRowBackground(Color(.secondarySystemBackground).opacity(0.35))
             .accessibilityElement(children: .combine)
         }
+        .scrollContentBackground(.hidden)
+        .gradientBackground(using: metric.color)
         .navigationTitle(metric.title)
+        .overlay {
+            if listData.isEmpty {
+                ContentUnavailableView("No \(metric.title) to Display", systemImage: metric == .steps ? "figure.walk" : "figure")
+            }
+        }
         .sheet(isPresented: $showAddData) {
-            addDataView
+            if #available(iOS 26.0, *) {
+                addDataView
+                    .presentationDetents([.fraction(0.4)])
+                    .navigationTransition(.zoom(sourceID: "addData", in: zoomTransition))
+            } else {
+                addDataView
+                    .presentationDetents([.fraction(0.4)])
+            }
         }
         .toolbar {
-            Button("Add Data", systemImage: "plus") {
-                showAddData = true
+            if #available(iOS 26.0, *) {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Add Data", systemImage: "plus") {
+                        showAddData = true
+                    }
+                    .buttonStyle(.glassProminent)
+                    .tint(metric.color)
+                }
+                .matchedTransitionSource(id: "addData", in: zoomTransition)
+            } else {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Add Data") {
+                        showAddData = true
+                    }
+                }
             }
         }
     }
@@ -58,6 +87,7 @@ struct HealthDataListView: View {
                 }
             }
             .navigationTitle(metric.title)
+            .scrollContentBackground(.hidden)
             .alert(isPresented: $showAlert, error: writeError) { writeError in
                 switch writeError {
                 case .sharingDenied(_):
@@ -74,15 +104,30 @@ struct HealthDataListView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Add Data") {
-                        addDataToHealthKit()
+                    if #available(iOS 26.0, *) {
+                        Button("Add Data", systemImage: "checkmark", role: .confirm) {
+                            addDataToHealthKit()
+                        }
+                        .tint(metric.color)
+                    } else {
+                        Button("Add Data") {
+                            addDataToHealthKit()
+                        }
                     }
                 }
 
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Dismiss") {
-                        showAddData = false
+                    if #available(iOS 26.0, *) {
+                        Button("Dismiss", systemImage: "xmark", role: .close) {
+                            showAddData = false
+                        }
+                        .tint(metric.color)
+                    } else {
+                        Button("Dismiss") {
+                            showAddData = false
+                        }
                     }
+                    
                 }
             }
         }
@@ -129,6 +174,7 @@ struct HealthDataListView: View {
         )
     }
     .environment(HealthKitManager())
+    .environment(HealthKitData())
 }
 
 #Preview("Weight List") {
@@ -138,4 +184,5 @@ struct HealthDataListView: View {
         )
     }
     .environment(HealthKitManager())
+    .environment(HealthKitData())
 }

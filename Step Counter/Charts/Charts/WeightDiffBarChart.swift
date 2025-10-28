@@ -36,6 +36,7 @@ struct WeightDiffBarChart: View {
                             x: .value("Day", weightDiff.date, unit: .day),
                             y: .value("Value", weightDiff.value)
                         )
+                        .cornerRadius(4)
                         .foregroundStyle(weightDiff.value >= 0 ? .indigo : .mint)
                         .opacity(rawSelectedDate == nil || weightDiff.date == selectedData?.date ? 1 : 0.3)
                     }
