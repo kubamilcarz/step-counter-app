@@ -1,5 +1,5 @@
 //
-//  Step_CounterApp.swift
+//  StepCounterApp.swift
 //  Step Counter
 //
 //  Created by Kuba Milcarz on 09/10/2025.
