@@ -14,7 +14,6 @@ import Observation
 /// Separates mutable state from `HealthKitManager` operations for Swift 6 concurrency.
 /// Inject via SwiftUI environment and update after fetching from `HealthKitManager`.
 @Observable
-@MainActor
 final class HealthKitData: Sendable {
     /// Cached step count data (typically 28 days).
     var stepData: [HealthMetric] = []

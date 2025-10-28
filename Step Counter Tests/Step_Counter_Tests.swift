@@ -98,9 +98,6 @@ struct ChartHelperTests {
         let tuesday = result.first { $0.date.weekdayInt == 3 }
         #expect(tuesday?.value == 1_125.0)
         #expect(tuesday?.date.weekdayTitle == "Tuesday")
-        
-        // Find Wednesday (should be 500)
-        let wednesday = result.first { $0.date.weekdayInt == 4 }
     }
     
     @MainActor @Test func averageWeekdayCount_withSingleWeek() {
