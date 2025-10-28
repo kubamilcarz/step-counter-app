@@ -10,7 +10,7 @@ import SwiftUI
 @available(iOS 26.0, *)
 struct CoachView: View {
     @Environment(\.dismiss) private var dismiss
-    
+
     @State var viewModel: CoachViewModel
 
     var body: some View {
@@ -30,12 +30,12 @@ struct CoachView: View {
                             .resizable()
                             .frame(width: 32, height: 32)
                             .clipShape(.circle)
-                        
+
                         Text("Coach Craig")
                     }
                     .frame(minWidth: 150, maxWidth: .infinity)
                 }
-            
+
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("OK", systemImage: "checkmark", role: .confirm) {
                         viewModel.onCloseButtonTapped {
@@ -51,7 +51,7 @@ struct CoachView: View {
             }
         }
     }
-    
+
     private var thinkingOverlay: some View {
         VStack(spacing: 16) {
             Image(systemName: "apple.intelligence")
