@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct StepCounterApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+
     let healthKitData = HealthKitData()
     let healthKitManager = HealthKitManager()
 

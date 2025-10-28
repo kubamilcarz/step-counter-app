@@ -9,17 +9,20 @@ import Foundation
 
 struct Dependencies {
     private let container: DependencyContainer
-    
+
     init(config: BuildConfiguration) {
         switch config {
-        case .mock(let isPremium, let isConnected):
+        case .mock:
             // mock-specific implementation
+            break
         case .dev:
             // dev-specific implementation
+            break
         case .prod:
             // prod-specific implementation
+            break
         }
-        
+
         let container = DependencyContainer()
         // register dependecies
         self.container = container

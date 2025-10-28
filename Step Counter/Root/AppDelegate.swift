@@ -8,11 +8,13 @@
 import UIKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-
     var config: BuildConfiguration!
     var dependencies: Dependencies!
-    
-    func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+
+    func application(
+        _: UIApplication,
+        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
         #if MOCK
             config = .mock
         #elseif DEV
@@ -20,9 +22,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         #else
             config = .prod
         #endif
-        
+
         dependencies = Dependencies(config: config)
-        
+
         return true
     }
 }
@@ -31,6 +33,6 @@ enum BuildConfiguration: Equatable {
     case mock(isPremium: Bool, isConnected: Bool)
     case dev
     case prod
-    
+
     var isProd: Bool { self == .prod }
 }
