@@ -67,27 +67,27 @@ final class CoachViewModel {
         loadTask = Task { @MainActor [weak self] in
             guard let self else { return }
             defer { self.loadTask = nil }
-            
+
             do {
                 let stream = dataIntelligenceRepo.analyzeDataStream()
-                
+
                 var receivedMessage = false
-                
+
                 for try await partial in stream {
                     guard !Task.isCancelled else { return }
-                    
+
                     coachMessage = partial.text
-                    
+
                     if !receivedMessage {
                         state = .success
                         receivedMessage = true
                     }
                 }
-                
+
                 if !receivedMessage {
                     state = .error
                     errorMessage =
-                    String(localized: "Coach Craig could not generate insights right now. Please try again.")
+                        String(localized: "Coach Craig could not generate insights right now. Please try again.")
                 }
             } catch let error as STError {
                 guard !Task.isCancelled else { return }

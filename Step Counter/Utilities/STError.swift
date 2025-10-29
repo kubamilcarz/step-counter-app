@@ -23,7 +23,7 @@ enum STError: LocalizedError {
 
     /// Input value failed validation.
     case invalidValue
-    
+
     case intelligenceUnavailable
 
     /// Short error title for alerts.
@@ -67,7 +67,7 @@ enum STError: LocalizedError {
 
         case .invalidValue:
             String(localized: "Must be a numeric value with a maximum of one decimal place.")
-            
+
         case .intelligenceUnavailable:
             String(localized: "This feature is currently not available on this device.")
         }

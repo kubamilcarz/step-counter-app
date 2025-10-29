@@ -19,7 +19,7 @@ final class DashboardViewModel {
     private(set) var state: ViewState = .initial
     var selectedMetric: HealthMetricContext = .steps
 
-    var shouldShowPermissionPriming = false
+    var showPermissionPriming = false
     var shouldShowAlert = false
     var showCoachSheet = false
     var fetchError: STError = .noData
@@ -80,13 +80,13 @@ final class DashboardViewModel {
                 healthDataStore.weightDiffData = fetchedDiff
 
                 state = .success
-                shouldShowPermissionPriming = false
+                showPermissionPriming = false
                 fetchTask = nil
             } catch STError.authNotDetermined {
                 guard !Task.isCancelled else { return }
 
                 state = .initial
-                shouldShowPermissionPriming = true
+                showPermissionPriming = true
                 fetchTask = nil
             } catch STError.noData {
                 guard !Task.isCancelled else { return }
