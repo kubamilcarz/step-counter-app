@@ -63,7 +63,11 @@ struct HealthKitPermissionPrimingView: View {
             "No Read and Write Access",
             isPresented: $viewModel.shouldShowErrorAlert,
             actions: {
-                Button("OK", role: .cancel) {}
+                Button("Settings") {
+                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                }
+                
+                Button("Cancel", role: .cancel) {}
             },
             message: {
                 Text(

@@ -36,6 +36,7 @@ struct BackportCoachSheet: ViewModifier {
                     CoachView(viewModel: CoachViewModel(analyzer: DataAnalyzer.shared))
                         .presentationDetents([.medium, .large])
                         .presentationDragIndicator(.visible)
+                        .presentationContentInteraction(.scrolls)
                         .navigationTransition(.zoom(sourceID: "coachView", in: namespace))
                 }
         } else {
