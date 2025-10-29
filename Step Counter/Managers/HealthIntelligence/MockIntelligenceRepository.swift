@@ -8,7 +8,6 @@
 import Foundation
 
 final class MockIntelligenceRepository: DataIntelligenceRepository {
-    
     init(
         isAvailable: Bool = true,
         isThinking: Bool = false,
@@ -18,11 +17,11 @@ final class MockIntelligenceRepository: DataIntelligenceRepository {
         self.isThinking = isThinking
         self.message = message
     }
-    
+
     var isAvailable: Bool
     var isThinking: Bool
     var message: String
-    
+
     func analyzeDataStream() -> AsyncThrowingStream<StreamResponse, any Error> {
         isThinking = true
         message = ""
@@ -37,20 +36,20 @@ final class MockIntelligenceRepository: DataIntelligenceRepository {
                 if #unavailable(iOS 26.0) {
                     continuation.finish(throwing: STError.unableToCompleteRequest)
                 }
-                
+
                 do {
                     for text in mockTexts {
                         try await Task.sleep(nanoseconds: 300_000_000)
-                        
+
                         message = text
                         isThinking = false
-                        
+
                         continuation.yield(.init(text: text))
                     }
                     continuation.finish()
                 } catch {
                     isThinking = false
-                    
+
                     continuation.finish(throwing: error)
                 }
             }
@@ -59,5 +58,9 @@ final class MockIntelligenceRepository: DataIntelligenceRepository {
                 task.cancel()
             }
         }
+    }
+
+    func clearMessage() {
+        message = ""
     }
 }

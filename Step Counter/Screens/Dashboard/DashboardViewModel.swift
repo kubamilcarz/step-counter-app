@@ -9,7 +9,6 @@ import Foundation
 
 @Observable
 final class DashboardViewModel {
-    // TODO: Temporary not private
     let healthDataRepo: HealthDataRepository
     let healthDataStore: HealthDataStore
     let dataIntelligenceRepo: DataIntelligenceRepository
@@ -24,15 +23,15 @@ final class DashboardViewModel {
     var shouldShowAlert = false
     var showCoachSheet = false
     var fetchError: STError = .noData
-    
+
     var stepData: [HealthMetric] {
         healthDataStore.stepData
     }
-    
+
     var weightData: [HealthMetric] {
         healthDataStore.weightData
     }
-    
+
     var weightDiffData: [HealthMetric] {
         healthDataStore.weightDiffData
     }
@@ -79,7 +78,7 @@ final class DashboardViewModel {
                 healthDataStore.stepData = fetchedSteps
                 healthDataStore.weightData = fetchedLine
                 healthDataStore.weightDiffData = fetchedDiff
-                
+
                 state = .success
                 shouldShowPermissionPriming = false
                 fetchTask = nil

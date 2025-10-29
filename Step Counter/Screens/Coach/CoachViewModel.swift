@@ -43,9 +43,9 @@ final class CoachViewModel {
         }
         loadCoachInsights()
     }
-    
+
     func onViewDisappear() {
-        // TODO: clear coach message
+        dataIntelligenceRepo.clearMessage()
     }
 
     func onRetryButtonTapped() {

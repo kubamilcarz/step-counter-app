@@ -18,7 +18,7 @@ final class HKIntelligenceRepository: DataIntelligenceRepository {
     var isAvailable: Bool {
         model.isAvailable
     }
-    
+
     var message: String {
         coachMessage ?? ""
     }
@@ -73,5 +73,9 @@ final class HKIntelligenceRepository: DataIntelligenceRepository {
                 streamTask.cancel()
             }
         }
+    }
+
+    func clearMessage() {
+        coachMessage = nil
     }
 }

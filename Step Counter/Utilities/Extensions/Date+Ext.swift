@@ -22,7 +22,7 @@ extension Date {
     var accessibilityDate: String {
         formatted(.dateTime.month(.wide).day())
     }
-    
+
     func createDateInterval(daysBack: Int) -> DateInterval {
         let calendar = Calendar.current
         let startOfEndDate = calendar.startOfDay(for: self)

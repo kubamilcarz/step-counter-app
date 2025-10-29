@@ -11,6 +11,7 @@ protocol DataIntelligenceRepository: Sendable {
     var isAvailable: Bool { get }
     var isThinking: Bool { get }
     var message: String { get }
-    
+
     func analyzeDataStream() -> AsyncThrowingStream<StreamResponse, Error>
+    func clearMessage()
 }

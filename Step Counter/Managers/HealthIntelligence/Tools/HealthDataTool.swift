@@ -12,9 +12,9 @@ import FoundationModels
 struct HealthDataTool: Tool {
     var name = "fetchStepsAndWeight"
     var description = "Fetches the user's recent step count and weight data from HealthKit."
-    
+
     private let healthDataRepository: HealthDataRepository
-    
+
     init(healthDataRepository: HealthDataRepository) {
         self.healthDataRepository = healthDataRepository
     }
