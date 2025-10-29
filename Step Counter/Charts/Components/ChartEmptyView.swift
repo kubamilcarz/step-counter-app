@@ -8,21 +8,20 @@
 import SwiftUI
 
 struct ChartEmptyView: View {
-    
     var title: String
     var systemImage: String
     var description: String
-    
+
     var body: some View {
         ContentUnavailableView {
             Image(systemName: systemImage)
                 .font(.largeTitle)
                 .bold()
                 .padding(.bottom, 8)
-            
+
             Text(title)
                 .font(.callout.bold())
-            
+
             Text(description)
                 .font(.footnote)
         }

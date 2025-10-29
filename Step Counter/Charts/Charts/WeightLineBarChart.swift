@@ -1,5 +1,5 @@
 //
-//  WeightLineChart.swift
+//  WeightLineBarChart.swift
 //  Step Counter
 //
 //  Created by Kuba Milcarz on 15/10/2025.
@@ -9,27 +9,26 @@ import Charts
 import SwiftUI
 
 struct WeightLineChart: View {
-    
     var chartData: [DateValueChartData]
-    
+
     @State private var rawSelectedDate: Date?
     @State private var selectedDay: Date?
-    
+
     var minValue: Double {
         chartData.map(\.value).min() ?? 0
     }
-    
+
     var selectedData: DateValueChartData? {
         ChartHelper.parseSelectedData(from: chartData, in: rawSelectedDate)
     }
-    
+
     var body: some View {
         ChartContainer(chartType: .weightLine(average: chartData.map(\.value).average)) {
             Chart {
                 if let selectedData {
                     ChartAnnotationView(data: selectedData, context: .weight)
                 }
-                
+
                 // TODO: Implement user goal
                 if !chartData.isEmpty {
                     RuleMark(y: .value("Goal", 155))
@@ -37,7 +36,7 @@ struct WeightLineChart: View {
                         .lineStyle(.init(lineWidth: 1, dash: [5]))
                         .accessibilityHidden(true)
                 }
-                
+
                 ForEach(chartData) { weight in
                     Plot {
                         AreaMark(
@@ -47,7 +46,7 @@ struct WeightLineChart: View {
                         )
                         .foregroundStyle(Gradient(colors: [.indigo.opacity(0.5), .indigo.opacity(0)]))
                         .interpolationMethod(.catmullRom)
-                        
+
                         LineMark(
                             x: .value("Day", weight.date, unit: .day),
                             y: .value("Value", weight.value)
@@ -69,16 +68,20 @@ struct WeightLineChart: View {
                 }
             }
             .chartYAxis {
-                AxisMarks { value in
+                AxisMarks { _ in
                     AxisGridLine()
                         .foregroundStyle(.secondary.opacity(0.3))
-                    
+
                     AxisValueLabel()
                 }
             }
             .overlay {
                 if chartData.isEmpty {
-                    ChartEmptyView(title: "No Data", systemImage: "chart.line.downtrend.xyaxis", description: "There is no step count data from the Health App.")
+                    ChartEmptyView(
+                        title: String(localized: "No Data"),
+                        systemImage: "chart.line.downtrend.xyaxis",
+                        description: String(localized: "There is no weight data from the Health App.")
+                    )
                 }
             }
         }
@@ -89,7 +92,6 @@ struct WeightLineChart: View {
             }
         }
     }
-    
 }
 
 #Preview {

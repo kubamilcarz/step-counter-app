@@ -9,10 +9,9 @@ import Charts
 import SwiftUI
 
 struct ChartAnnotationView: ChartContent {
-    
     var data: DateValueChartData
     var context: HealthMetricContext
-    
+
     var body: some ChartContent {
         RuleMark(x: .value("Selected Metric", data.date, unit: .day))
             .foregroundStyle(.secondary.opacity(0.3))
@@ -25,7 +24,7 @@ struct ChartAnnotationView: ChartContent {
                 annotationView
             }
     }
-    
+
     var annotationView: some View {
         VStack(alignment: .leading) {
             Text(data.date, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())

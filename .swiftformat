@@ -1,0 +1,127 @@
+# MARK: - Basic Formatting Options
+
+# Indentation and spacing
+--indent 4
+--tabwidth 4
+--maxwidth 120
+
+# Line breaks and semicolons
+--linebreaks lf
+--semicolons never
+
+# MARK: - Brace and Parentheses Style
+--allman false
+--closingparen balanced
+
+# MARK: - Argument and Parameter Wrapping
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--wrapconditions after-first
+
+# MARK: - Comma Handling
+--commas inline
+
+# MARK: - Self Usage
+--self remove
+--selfrequired 
+
+# MARK: - Import Organization
+--importgrouping testable-bottom
+
+# MARK: - Operator Spacing
+--operatorfunc spaced
+--nospaceoperators ...,..<
+--ranges spaced
+
+# MARK: - Attribute Placement
+--funcattributes prev-line
+--typeattributes prev-line
+--computedvarattrs same-line
+
+# MARK: - Control Flow
+--elseposition same-line
+--guardelse auto
+
+# MARK: - Pattern Matching
+--patternlet hoist
+
+# MARK: - Type and Optional Handling
+--redundanttype inferred
+--shortoptionals always
+--voidtype void
+
+# MARK: - Number Formatting
+--decimalgrouping 3
+--binarygrouping 4,8
+--octalgrouping 4,8
+--hexgrouping 4,8
+
+# MARK: - Enabled Rules (Community Favorites)
+--enable \
+blankLinesAroundMark,\
+blankLinesAtEndOfScope,\
+blankLinesAtStartOfScope,\
+blankLinesBetweenScopes,\
+braces,\
+consecutiveBlankLines,\
+consecutiveSpaces,\
+duplicateImports,\
+elseOnSameLine,\
+emptyBraces,\
+extensionAccessControl,\
+hoistPatternLet,\
+indent,\
+isEmpty,\
+leadingDelimiters,\
+linebreakAtEndOfFile,\
+linebreaks,\
+modifierOrder,\
+numberFormatting,\
+preferKeyPath,\
+redundantBackticks,\
+redundantBreak,\
+redundantExtensionACL,\
+redundantFileprivate,\
+redundantGet,\
+redundantInit,\
+redundantLet,\
+redundantLetError,\
+redundantNilInit,\
+redundantObjc,\
+redundantParens,\
+redundantPattern,\
+redundantRawValues,\
+redundantReturn,\
+redundantSelf,\
+redundantType,\
+redundantVoidReturnType,\
+semicolons,\
+sortImports,\
+spaceAroundBraces,\
+spaceAroundBrackets,\
+spaceAroundComments,\
+spaceAroundGenerics,\
+spaceAroundOperators,\
+spaceAroundParens,\
+spaceInsideBraces,\
+spaceInsideBrackets,\
+spaceInsideComments,\
+spaceInsideGenerics,\
+spaceInsideParens,\
+strongOutlets,\
+trailingClosures,\
+trailingSpace,\
+typeSugar,\
+unusedArguments,\
+void,\
+wrap,\
+wrapArguments,\
+yodaConditions,\
+blankLineAfterSwitchCase,\
+
+
+# MARK: - File Exclusions
+--exclude Pods,Carthage,Generated,*.generated.swift,DerivedData
+
+--swiftversion 6.2
