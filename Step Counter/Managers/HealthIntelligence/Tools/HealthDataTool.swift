@@ -8,13 +8,17 @@
 import Foundation
 import FoundationModels
 
+/// Tool that surfaces recent HealthKit steps and weight stats for the language model session.
 @available(iOS 26.0, *)
 struct HealthDataTool: Tool {
+    /// Tool name exposed to the model.
     var name = "fetchStepsAndWeight"
+    /// Short tool description consumed by Apple Intelligence.
     var description = "Fetches the user's recent step count and weight data from HealthKit."
 
     private let healthDataRepository: HealthDataRepository
 
+    /// Creates a tool backed by the provided repository (real or mock).
     init(healthDataRepository: HealthDataRepository) {
         self.healthDataRepository = healthDataRepository
     }
@@ -22,6 +26,7 @@ struct HealthDataTool: Tool {
     @Generable()
     struct Arguments {}
 
+    /// Computes aggregate metrics for both steps and weight data.
     func call(arguments _: Arguments) async throws -> String {
         let steps = try await healthDataRepository.fetchStepCount().map(\.value)
         let weights = try await healthDataRepository.fetchWeightsCount(daysBack: 28).map(\.value)

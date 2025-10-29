@@ -16,7 +16,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         #if MOCK
-            config = .mock
+            config = .mock(isPremium: false, isConnected: true)
         #elseif DEV
             config = .dev
         #else
