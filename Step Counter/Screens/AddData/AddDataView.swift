@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct AddDataView: View {
     @Environment(\.dismiss) private var dismiss

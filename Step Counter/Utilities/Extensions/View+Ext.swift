@@ -1,5 +1,5 @@
 //
-//  CustomModifiers.swift
+//  View+Ext.swift
 //  Step Counter
 //
 //  Created by Kuba Milcarz on 24/10/2025.

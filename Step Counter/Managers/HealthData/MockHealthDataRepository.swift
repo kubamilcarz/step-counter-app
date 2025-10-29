@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import HealthKit
 
 @Observable
 final class MockHealthDataRepository: HealthDataRepository {
