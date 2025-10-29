@@ -44,8 +44,8 @@ final class HealthDataListViewModel {
 
     private func sourceData(for metric: HealthMetricContext) -> [HealthMetric] {
         switch metric {
-        case .steps: return healthKitData.stepData
-        case .weight: return healthKitData.weightData
+        case .steps: healthKitData.stepData
+        case .weight: healthKitData.weightData
         }
     }
 }

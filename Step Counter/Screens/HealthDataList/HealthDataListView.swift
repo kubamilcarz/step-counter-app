@@ -61,8 +61,7 @@ struct HealthDataListView: View {
         .onAppear { viewModel.onAppear(config: config) }
     }
 
-    @ViewBuilder
-    private var overlayContent: some View {
+    @ViewBuilder private var overlayContent: some View {
         if viewModel.state == .loading {
             ProgressView()
                 .progressViewStyle(.circular)
