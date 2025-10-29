@@ -65,7 +65,7 @@ struct WeightDiffBarChart: View {
                     ChartEmptyView(
                         title: String(localized: "No Data"),
                         systemImage: "chart.bar",
-                        description: String(localized: "There is no step count data from the Health App.")
+                        description: String(localized: "There is no weight data from the Health App.")
                     )
                 }
             }

@@ -80,7 +80,7 @@ struct WeightLineChart: View {
                     ChartEmptyView(
                         title: String(localized: "No Data"),
                         systemImage: "chart.line.downtrend.xyaxis",
-                        description: String(localized: "There is no step count data from the Health App.")
+                        description: String(localized: "There is no weight data from the Health App.")
                     )
                 }
             }
