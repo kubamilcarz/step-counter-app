@@ -8,26 +8,6 @@
 import Charts
 import SwiftUI
 
-enum HealthMetricContext: CaseIterable, Identifiable {
-    case steps, weight
-
-    var id: Self { self }
-
-    var title: String {
-        switch self {
-        case .steps: "Steps"
-        case .weight: "Weight"
-        }
-    }
-
-    var color: Color {
-        switch self {
-        case .steps: .pink
-        case .weight: .indigo
-        }
-    }
-}
-
 struct DashboardView: View {
     @Environment(HealthKitData.self) private var healthKitData
     @Environment(HealthKitManager.self) private var healthKitManager
