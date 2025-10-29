@@ -27,7 +27,7 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    Picker("Selected Stat", selection: $viewModel.selectedMetric) {
+                    Picker("Selected Metric", selection: $viewModel.selectedMetric) {
                         ForEach(HealthMetricContext.allCases) { metric in
                             Text(metric.title)
                         }
