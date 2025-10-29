@@ -19,11 +19,11 @@ final class HealthKitPermissionPrimingViewModel {
         self.healthKitManager = healthKitManager
     }
 
-    let description = """
+    let description = String(localized: """
     This app displays your step and weight data in interactive charts.
 
     You can also add new step or weight data to Apple Health from this app. Your data is private and secured.
-    """
+    """)
 
     @MainActor
     func onConnectButtonTapped(onDismiss: @escaping () -> Void) async {

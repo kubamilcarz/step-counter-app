@@ -63,9 +63,9 @@ struct WeightDiffBarChart: View {
             .overlay {
                 if chartData.isEmpty {
                     ChartEmptyView(
-                        title: "No Data",
+                        title: String(localized: "No Data"),
                         systemImage: "chart.bar",
-                        description: "There is no step count data from the Health App."
+                        description: String(localized: "There is no step count data from the Health App.")
                     )
                 }
             }

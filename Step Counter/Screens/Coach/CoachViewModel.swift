@@ -39,7 +39,7 @@ final class CoachViewModel {
         guard state == .initial else { return }
         guard isAvailable else {
             state = .error
-            errorMessage = "Coach Craig is not available on this device yet."
+            errorMessage = String(localized: "Coach Craig is not available on this device yet.")
             return
         }
         loadCoachInsights()
@@ -49,7 +49,7 @@ final class CoachViewModel {
         guard state != .loading else { return }
         guard isAvailable else {
             state = .error
-            errorMessage = "Coach Craig is not available on this device yet."
+            errorMessage = String(localized: "Coach Craig is not available on this device yet.")
             return
         }
         loadCoachInsights()
@@ -84,7 +84,7 @@ final class CoachViewModel {
 
                 if !receivedMessage {
                     state = .error
-                    errorMessage = "Coach Craig could not generate insights right now. Please try again."
+                    errorMessage = String(localized: "Coach Craig could not generate insights right now. Please try again.")
                 }
             } catch {
                 guard !Task.isCancelled else { return }
