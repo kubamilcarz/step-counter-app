@@ -5,20 +5,13 @@
 //  Created by Kuba Milcarz on 09/10/2025.
 //
 
-import HealthKitUI
+import Observation
 import SwiftUI
 
 struct HealthKitPermissionPrimingView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(HealthKitManager.self) private var healthKitManager
 
-    @State private var showHealthKitPermissions = false
-
-    private let description = """
-    This app displays your step and weight data in interactive charts.
-
-    You can also add new step or weight data to Apple Health from this app. Your data is private and secured.
-    """
+    @State var viewModel: HealthKitPermissionPrimingViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -35,7 +28,7 @@ struct HealthKitPermissionPrimingView: View {
                 .font(.title2)
                 .bold()
 
-            Text(description)
+            Text(viewModel.description)
                 .foregroundStyle(.secondary)
 
             Spacer()
@@ -43,7 +36,11 @@ struct HealthKitPermissionPrimingView: View {
         .padding(30)
         .safeAreaInset(edge: .bottom) {
             Button {
-                showHealthKitPermissions = true
+                Task {
+                    await viewModel.onConnectButtonTapped(onDismiss: {
+                        dismiss()
+                    })
+                }
             } label: {
                 Text("Connect Apple Health")
                     .padding(8)
@@ -52,27 +49,35 @@ struct HealthKitPermissionPrimingView: View {
             }
             .prominentButton(.pink)
             .tint(.pink)
+            .disabled(viewModel.state == .loading)
             .padding(.vertical, 12)
             .padding(.horizontal, 30)
         }
-        .healthDataAccessRequest(
-            store: healthKitManager.store,
-            shareTypes: healthKitManager.types,
-            readTypes: healthKitManager.types,
-            trigger: showHealthKitPermissions
-        ) { result in
-            switch result {
-            case .success:
-                Task { @MainActor in dismiss() }
-            case .failure:
-                // more code to come
-                Task { @MainActor in dismiss() }
+        .overlay {
+            if viewModel.state == .loading {
+                ProgressView()
+                    .progressViewStyle(.circular)
             }
         }
+        .alert(
+            "No Read and Write Access",
+            isPresented: $viewModel.shouldShowErrorAlert,
+            actions: {
+                Button("OK", role: .cancel) {}
+            },
+            message: {
+                Text(
+                    "To use Step Counter with Apple Health, please enable read and write access for step count and weight data in Settings > Health > Data Access & Devices > Step Counter."
+                )
+            }
+        )
     }
 }
 
 #Preview {
-    HealthKitPermissionPrimingView()
-        .environment(HealthKitManager())
+    HealthKitPermissionPrimingView(
+        viewModel: HealthKitPermissionPrimingViewModel(
+            healthKitManager: HealthKitManager()
+        )
+    )
 }

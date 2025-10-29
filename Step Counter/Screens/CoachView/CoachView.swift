@@ -43,7 +43,7 @@ struct CoachView: View {
                 }
             }
             .overlay {
-                if viewModel.state == .loading {
+                if viewModel.state == .loading, viewModel.isThinking {
                     thinkingOverlay
                 }
             }

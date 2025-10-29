@@ -90,7 +90,11 @@ struct DashboardView: View {
             .fullScreenCover(isPresented: $showPermissionPriming) {
                 fetchHealthData()
             } content: {
-                HealthKitPermissionPrimingView()
+                HealthKitPermissionPrimingView(
+                    viewModel: HealthKitPermissionPrimingViewModel(
+                        healthKitManager: healthKitManager
+                    )
+                )
             }
             .backportCoachSheet(isPresented: $showCoachSheet, namespace: zoomTransition)
             .alert(isPresented: $showAlert, error: fetchError) { _ in

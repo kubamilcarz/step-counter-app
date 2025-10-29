@@ -15,6 +15,7 @@ final class DataAnalyzer {
 
     let model: SystemLanguageModel = .default
     var coachMessage: String.PartiallyGenerated?
+    var isThinking = false
 
     private init() {}
 
@@ -22,7 +23,10 @@ final class DataAnalyzer {
         model.isAvailable
     }
 
-    func analyzeHealthData() async throws {
+    func analyzeHealthDataStream() -> AsyncThrowingStream<String.PartiallyGenerated, Error> {
+        isThinking = true
+        coachMessage = nil
+
         let session = LanguageModelSession(
             tools: [HealthDataTool()],
             instructions: "You are a high-energy motivational fitness coach. You love to analyze step count and weight data to surface valuable insights and motivate people along their fitness journey and help them with their fitness goals."
@@ -36,10 +40,35 @@ final class DataAnalyzer {
         The output should be 2 to 3 short paragraphs, human readable, and easy to digest. It should read as if a fitness coach is talking to the user and cheering on their fitness journey. Focus mostly on data and insights with a touch of motivational language. Only use an emoji after the final line of your response.
         """
 
-        let stream = session.streamResponse(to: prompt)
+        let responseStream = session.streamResponse(to: prompt)
 
-        for try await partial in stream where partial.content != "null" {
-            coachMessage = partial.content
+        return AsyncThrowingStream { continuation in
+            let streamTask = Task {
+                do {
+                    for try await partial in responseStream where partial.content != "null" {
+                        await MainActor.run {
+                            self.coachMessage = partial.content
+                            self.isThinking = false
+                        }
+                        continuation.yield(partial.content)
+                    }
+
+                    await MainActor.run {
+                        self.isThinking = false
+                    }
+
+                    continuation.finish()
+                } catch {
+                    await MainActor.run {
+                        self.isThinking = false
+                    }
+                    continuation.finish(throwing: error)
+                }
+            }
+
+            continuation.onTermination = { @Sendable _ in
+                streamTask.cancel()
+            }
         }
     }
 }
