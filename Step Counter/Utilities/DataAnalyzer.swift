@@ -15,7 +15,7 @@ final class DataAnalyzer {
 
     let model: SystemLanguageModel = .default
     var coachMessage: String.PartiallyGenerated?
-    var isThinking: Bool = false
+    var isThinking = false
 
     private init() {}
 

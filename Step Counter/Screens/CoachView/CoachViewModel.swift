@@ -66,7 +66,7 @@ final class CoachViewModel {
             defer { self.loadTask = nil }
 
             do {
-                let stream = self.analyzer.analyzeHealthDataStream()
+                let stream = analyzer.analyzeHealthDataStream()
 
                 var receivedMessage = false
 
@@ -74,22 +74,22 @@ final class CoachViewModel {
                     guard !Task.isCancelled else { return }
 
                     let text = String(describing: partial)
-                    self.coachMessage = text
+                    coachMessage = text
 
                     if !receivedMessage {
-                        self.state = .success
+                        state = .success
                         receivedMessage = true
                     }
                 }
 
                 if !receivedMessage {
-                    self.state = .error
-                    self.errorMessage = "Coach Craig could not generate insights right now. Please try again."
+                    state = .error
+                    errorMessage = "Coach Craig could not generate insights right now. Please try again."
                 }
             } catch {
                 guard !Task.isCancelled else { return }
-                self.state = .error
-                self.errorMessage = error.localizedDescription
+                state = .error
+                errorMessage = error.localizedDescription
             }
         }
     }

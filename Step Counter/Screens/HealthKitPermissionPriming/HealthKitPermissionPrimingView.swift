@@ -10,7 +10,7 @@ import SwiftUI
 
 struct HealthKitPermissionPrimingView: View {
     @Environment(\.dismiss) private var dismiss
-    
+
     @State var viewModel: HealthKitPermissionPrimingViewModel
 
     var body: some View {
@@ -66,7 +66,9 @@ struct HealthKitPermissionPrimingView: View {
                 Button("OK", role: .cancel) {}
             },
             message: {
-                Text("To use Step Counter with Apple Health, please enable read and write access for step count and weight data in Settings > Health > Data Access & Devices > Step Counter.")
+                Text(
+                    "To use Step Counter with Apple Health, please enable read and write access for step count and weight data in Settings > Health > Data Access & Devices > Step Counter."
+                )
             }
         )
     }
