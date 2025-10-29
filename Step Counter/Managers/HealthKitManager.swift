@@ -39,6 +39,39 @@ final class HealthKitManager: Sendable {
     /// HealthKit quantity types this app accesses (stepCount, bodyMass).
     let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
 
+    // MARK: - Authorization
+
+    /// Requests read/write authorization for all configured HealthKit quantity types.
+    ///
+    /// Automatically surfaces the system permission sheet when needed.
+    /// - Throws: `STError.unableToCompleteRequest`, `STError.sharingDenied`, or `STError.authNotDetermined`.
+    func requestAuthorization() async throws {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            throw STError.unableToCompleteRequest
+        }
+
+        do {
+            try await store.requestAuthorization(toShare: types, read: types)
+        } catch {
+            throw STError.unableToCompleteRequest
+        }
+
+        let stepStatus = store.authorizationStatus(for: HKQuantityType(.stepCount))
+        let weightStatus = store.authorizationStatus(for: HKQuantityType(.bodyMass))
+
+        guard stepStatus != .notDetermined, weightStatus != .notDetermined else {
+            throw STError.authNotDetermined
+        }
+
+        if stepStatus == .sharingDenied {
+            throw STError.sharingDenied(quantityType: "step count")
+        }
+
+        if weightStatus == .sharingDenied {
+            throw STError.sharingDenied(quantityType: "weight")
+        }
+    }
+
     // MARK: - Fetch methods
 
     /// Fetches step count data for the last 28 days.
