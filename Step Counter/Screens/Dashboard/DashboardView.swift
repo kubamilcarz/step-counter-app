@@ -10,9 +10,6 @@ import SwiftUI
 struct DashboardView: View {
     @Namespace private var zoomTransition
 
-    @Environment(HealthKitData.self) private var healthKitData
-    @Environment(HealthDataRepository.self) private var healthKitManager
-
     @State var viewModel: DashboardViewModel
 
     var navbarTint: Color {
@@ -37,20 +34,20 @@ struct DashboardView: View {
                     switch viewModel.selectedMetric {
                     case .steps:
                         StepBarChart(
-                            chartData: ChartHelper.convert(data: healthKitData.stepData)
+                            chartData: ChartHelper.convert(data: viewModel.stepData)
                         )
 
                         StepPieChart(
-                            chartData: ChartHelper.averageWeekdayCount(for: healthKitData.stepData)
+                            chartData: ChartHelper.averageWeekdayCount(for: viewModel.stepData)
                         )
 
                     case .weight:
                         WeightLineChart(
-                            chartData: ChartHelper.convert(data: healthKitData.weightData)
+                            chartData: ChartHelper.convert(data: viewModel.weightData)
                         )
 
                         WeightDiffBarChart(
-                            chartData: ChartHelper.averageDailyWeightDiffs(for: healthKitData.weightDiffData)
+                            chartData: ChartHelper.averageDailyWeightDiffs(for: viewModel.weightDiffData)
                         )
                     }
                 }
@@ -62,7 +59,10 @@ struct DashboardView: View {
             .toolbarTitleDisplayMode(.inlineLarge)
             .navigationDestination(for: HealthMetricContext.self) { metric in
                 HealthDataListView(
-                    viewModel: HealthDataListViewModel(healthKitData: healthKitData),
+                    viewModel: HealthDataListViewModel(
+                        healthDataRepo: viewModel.healthDataRepo,
+                        healthDataStore: viewModel.healthDataStore
+                    ),
                     config: .init(metric: metric)
                 )
             }
@@ -71,7 +71,7 @@ struct DashboardView: View {
             } content: {
                 HealthKitPermissionPrimingView(
                     viewModel: HealthKitPermissionPrimingViewModel(
-                        healthKitManager: healthKitManager
+                        healthDataRepo: viewModel.healthDataRepo
                     )
                 )
             }
@@ -99,15 +99,10 @@ struct DashboardView: View {
 }
 
 #Preview {
-    let healthKitManager = HKHealthDataRepository()
-    let healthKitData = HealthKitData()
-
-    return DashboardView(
+    DashboardView(
         viewModel: DashboardViewModel(
-            healthKitManager: healthKitManager,
-            healthKitData: healthKitData
+            healthDataRepo: MockHealthDataRepository(),
+            healthDataStore: HealthDataStore()
         )
     )
-    .environment(healthKitManager)
-    .environment(healthKitData)
 }

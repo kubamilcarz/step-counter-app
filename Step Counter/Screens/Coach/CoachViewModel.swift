@@ -5,8 +5,7 @@
 //  Created by Kuba Milcarz on 28/10/2025.
 //
 
-import Observation
-import SwiftUI
+import Foundation
 
 @available(iOS 26.0, *)
 @Observable

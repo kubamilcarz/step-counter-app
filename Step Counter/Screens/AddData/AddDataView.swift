@@ -100,8 +100,8 @@ struct AddDataView: View {
 #Preview {
     AddDataView(
         viewModel: AddDataViewModel(
-            healthKitManager: HKHealthDataRepository(),
-            healthKitData: HealthKitData()
+            healthDataRepo: MockHealthDataRepository(),
+            healthDataStore: HealthDataStore()
         ),
         config: AddDataViewConfig(
             metric: .steps,

@@ -9,8 +9,9 @@ import Foundation
 
 @Observable
 final class DashboardViewModel {
-    private let healthKitManager: HealthDataRepository
-    private let healthKitData: HealthKitData
+    // TODO: Temporary not private
+    let healthDataRepo: HealthDataRepository
+    let healthDataStore: HealthDataStore
 
     @ObservationIgnored
     private var fetchTask: Task<Void, Never>?
@@ -22,10 +23,22 @@ final class DashboardViewModel {
     var shouldShowAlert = false
     var shouldShowCoachSheet = false
     var fetchError: STError = .noData
+    
+    var stepData: [HealthMetric] {
+        healthDataStore.stepData
+    }
+    
+    var weightData: [HealthMetric] {
+        healthDataStore.weightData
+    }
+    
+    var weightDiffData: [HealthMetric] {
+        healthDataStore.weightDiffData
+    }
 
-    init(healthKitManager: HealthDataRepository, healthKitData: HealthKitData) {
-        self.healthKitManager = healthKitManager
-        self.healthKitData = healthKitData
+    init(healthDataRepo: HealthDataRepository, healthDataStore: HealthDataStore) {
+        self.healthDataRepo = healthDataRepo
+        self.healthDataStore = healthDataStore
     }
 
     deinit {
@@ -49,17 +62,18 @@ final class DashboardViewModel {
             guard let self else { return }
 
             do {
-                async let steps = healthKitManager.fetchStepCount()
-                async let weightsLine = healthKitManager.fetchWeightsCount(daysBack: 28)
-                async let weightsDiff = healthKitManager.fetchWeightsCount(daysBack: 29)
+                async let steps = healthDataRepo.fetchStepCount()
+                async let weightsLine = healthDataRepo.fetchWeightsCount(daysBack: 28)
+                async let weightsDiff = healthDataRepo.fetchWeightsCount(daysBack: 29)
 
                 let (fetchedSteps, fetchedLine, fetchedDiff) = try await (steps, weightsLine, weightsDiff)
 
                 guard !Task.isCancelled else { return }
 
-                healthKitData.stepData = fetchedSteps
-                healthKitData.weightData = fetchedLine
-                healthKitData.weightDiffData = fetchedDiff
+                healthDataStore.stepData = fetchedSteps
+                healthDataStore.weightData = fetchedLine
+                healthDataStore.weightDiffData = fetchedDiff
+                
                 state = .success
                 shouldShowPermissionPriming = false
                 fetchTask = nil

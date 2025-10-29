@@ -9,8 +9,6 @@ import SwiftUI
 
 struct HealthDataListView: View {
     @Namespace private var zoomTransition
-    @Environment(HealthKitManager.self) private var healthKitManager
-    @Environment(HealthKitData.self) private var healthKitData
 
     @State var viewModel: HealthDataListViewModel
     let config: HealthDataListViewConfig
@@ -77,8 +75,8 @@ struct HealthDataListView: View {
     private func addDataSheet() -> some View {
         let addDataView = AddDataView(
             viewModel: AddDataViewModel(
-                healthKitManager: healthKitManager,
-                healthKitData: healthKitData
+                healthDataRepo: viewModel.healthDataRepo,
+                healthDataStore: viewModel.healthDataStore
             ),
             config: AddDataViewConfig(metric: config.metric, onCompletion: viewModel.onAddSuccess)
         )
@@ -97,7 +95,8 @@ struct HealthDataListView: View {
     NavigationStack {
         HealthDataListView(
             viewModel: HealthDataListViewModel(
-                healthKitData: HealthKitData()
+                healthDataRepo: MockHealthDataRepository(),
+                healthDataStore: HealthDataStore()
             ),
             config: .init(metric: .steps)
         )
@@ -108,7 +107,8 @@ struct HealthDataListView: View {
     NavigationStack {
         HealthDataListView(
             viewModel: HealthDataListViewModel(
-                healthKitData: HealthKitData()
+                healthDataRepo: MockHealthDataRepository(),
+                healthDataStore: HealthDataStore()
             ),
             config: .init(metric: .weight)
         )

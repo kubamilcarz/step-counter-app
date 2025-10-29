@@ -5,18 +5,17 @@
 //  Created by Kuba Milcarz on 29/10/2025.
 //
 
-import Observation
-import SwiftUI
+import Foundation
 
 @Observable
 final class HealthKitPermissionPrimingViewModel {
-    private let healthDataRepository: HealthDataRepository
+    private let healthDataRepo: HealthDataRepository
 
     private(set) var state: ViewState = .initial
     var shouldShowErrorAlert = false
 
-    init(healthDataRepository: HealthDataRepository) {
-        self.healthDataRepository = healthDataRepository
+    init(healthDataRepo: HealthDataRepository) {
+        self.healthDataRepo = healthDataRepo
     }
 
     let description = String(localized: """
@@ -31,7 +30,7 @@ final class HealthKitPermissionPrimingViewModel {
         shouldShowErrorAlert = false
 
         do {
-            try await healthDataRepository.requestAuthorization()
+            try await healthDataRepo.requestAuthorization()
             state = .success
             onDismiss()
         } catch {

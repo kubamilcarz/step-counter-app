@@ -81,7 +81,8 @@ struct HealthKitPermissionPrimingView: View {
 #Preview {
     HealthKitPermissionPrimingView(
         viewModel: HealthKitPermissionPrimingViewModel(
-            healthKitManager: HealthKitManager()
+            // TODO: Implement mocking different results
+            healthDataRepo: MockHealthDataRepository()
         )
     )
 }

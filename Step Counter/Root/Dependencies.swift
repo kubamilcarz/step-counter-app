@@ -10,28 +10,28 @@ import Foundation
 struct Dependencies {
     private let container: DependencyContainer
 
-    let healthDataRepository: HealthDataRepository
-    let healthKitData: HealthDataStore
+    let healthDataRepo: HealthDataRepository
+    let healthDataStore: HealthDataStore
 
     init(config: BuildConfiguration) {
         switch config {
         case .mock:
-            // mock-specific implementation
-            break
+            healthDataRepo = MockHealthDataRepository()
         case .dev:
-            // dev-specific implementation
-            break
+            healthDataRepo = HKHealthDataRepository()
         case .prod:
-            // prod-specific implementation
-            break
+            healthDataRepo = HKHealthDataRepository()
         }
 
-        healthKitManager = HKHealthDataRepository()
-        healthKitData = HealthKitData()
+        // MARK: - Shared
+        healthDataStore = HealthDataStore()
 
+        // MARK: - Container Registeration
         let container = DependencyContainer()
-        container.register(HealthKitManager.self, service: healthKitManager)
-        container.register(HealthKitData.self, service: healthKitData)
+        
+        container.register(HealthDataRepository.self, service: healthDataRepo)
+        container.register(HealthDataStore.self, service: healthDataStore)
+        
         self.container = container
     }
 }

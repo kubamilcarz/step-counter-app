@@ -5,6 +5,8 @@
 //  Created by Kuba Milcarz on 29/10/2025.
 //
 
+import Foundation
+import HealthKit
 
 /// Handles all HealthKit data fetching and writing operations.
 ///
