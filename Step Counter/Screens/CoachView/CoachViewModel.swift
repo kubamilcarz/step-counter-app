@@ -18,6 +18,7 @@ final class CoachViewModel {
 
     private(set) var state: ViewState = .initial
     private(set) var errorMessage: String?
+    private(set) var coachMessage: String?
 
     init(analyzer: DataAnalyzer) {
         self.analyzer = analyzer
@@ -27,8 +28,8 @@ final class CoachViewModel {
         loadTask?.cancel()
     }
 
+    var isThinking: Bool { analyzer.isThinking }
     var isAvailable: Bool { analyzer.isAvailable }
-    var coachMessage: String? { analyzer.coachMessage.map(String.init(describing:)) }
 
     func onCloseButtonTapped(onDismiss: @escaping () -> Void) {
         onDismiss()
@@ -56,29 +57,39 @@ final class CoachViewModel {
 
     private func loadCoachInsights() {
         loadTask?.cancel()
-        analyzer.coachMessage = nil
+        coachMessage = nil
         state = .loading
         errorMessage = nil
 
         loadTask = Task { @MainActor [weak self] in
             guard let self else { return }
+            defer { self.loadTask = nil }
 
             do {
-                try await analyzer.analyzeHealthData()
+                let stream = self.analyzer.analyzeHealthDataStream()
 
-                if analyzer.coachMessage != nil {
-                    state = .success
-                } else {
-                    state = .error
-                    errorMessage = "Coach Craig could not generate insights right now. Please try again."
+                var receivedMessage = false
+
+                for try await partial in stream {
+                    guard !Task.isCancelled else { return }
+
+                    let text = String(describing: partial)
+                    self.coachMessage = text
+
+                    if !receivedMessage {
+                        self.state = .success
+                        receivedMessage = true
+                    }
                 }
 
-                loadTask = nil
+                if !receivedMessage {
+                    self.state = .error
+                    self.errorMessage = "Coach Craig could not generate insights right now. Please try again."
+                }
             } catch {
                 guard !Task.isCancelled else { return }
-                state = .error
-                errorMessage = error.localizedDescription
-                loadTask = nil
+                self.state = .error
+                self.errorMessage = error.localizedDescription
             }
         }
     }

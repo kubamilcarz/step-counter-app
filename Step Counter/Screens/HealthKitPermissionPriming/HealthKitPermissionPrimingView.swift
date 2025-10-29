@@ -5,6 +5,7 @@
 //  Created by Kuba Milcarz on 09/10/2025.
 //
 
+import Observation
 import SwiftUI
 
 struct HealthKitPermissionPrimingView: View {
@@ -58,6 +59,16 @@ struct HealthKitPermissionPrimingView: View {
                     .progressViewStyle(.circular)
             }
         }
+        .alert(
+            "No Read and Write Access",
+            isPresented: $viewModel.shouldShowErrorAlert,
+            actions: {
+                Button("OK", role: .cancel) {}
+            },
+            message: {
+                Text("To use Step Counter with Apple Health, please enable read and write access for step count and weight data in Settings > Health > Data Access & Devices > Step Counter.")
+            }
+        )
     }
 }
 

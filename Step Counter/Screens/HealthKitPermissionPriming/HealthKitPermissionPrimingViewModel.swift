@@ -5,6 +5,7 @@
 //  Created by Kuba Milcarz on 29/10/2025.
 //
 
+import Observation
 import SwiftUI
 
 @Observable
@@ -12,6 +13,7 @@ final class HealthKitPermissionPrimingViewModel {
     private let healthKitManager: HealthKitManager
     
     private(set) var state: ViewState = .initial
+    var shouldShowErrorAlert = false
     
     init(healthKitManager: HealthKitManager) {
         self.healthKitManager = healthKitManager
@@ -26,6 +28,7 @@ final class HealthKitPermissionPrimingViewModel {
     @MainActor
     func onConnectButtonTapped(onDismiss: @escaping () -> Void) async {
         state = .loading
+        shouldShowErrorAlert = false
 
         do {
             try await healthKitManager.requestAuthorization()
@@ -33,6 +36,7 @@ final class HealthKitPermissionPrimingViewModel {
             onDismiss()
         } catch {
             state = .error
+            shouldShowErrorAlert = true
         }
     }
 }
