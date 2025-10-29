@@ -14,7 +14,7 @@ struct HealthDataListView: View {
 
     @State var viewModel: HealthDataListViewModel
     let config: HealthDataListViewConfig
-    
+
     var body: some View {
         List(viewModel.listData) { data in
             LabeledContent {

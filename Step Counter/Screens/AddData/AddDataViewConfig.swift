@@ -10,7 +10,7 @@ import Foundation
 struct AddDataViewConfig {
     let metric: HealthMetricContext
     let onCompletion: () -> Void
-    
+
     init(metric: HealthMetricContext, onCompletion: @escaping () -> Void) {
         self.metric = metric
         self.onCompletion = onCompletion

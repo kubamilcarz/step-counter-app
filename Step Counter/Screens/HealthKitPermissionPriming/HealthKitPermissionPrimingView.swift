@@ -66,7 +66,7 @@ struct HealthKitPermissionPrimingView: View {
                 Button("Settings") {
                     UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                 }
-                
+
                 Button("Cancel", role: .cancel) {}
             },
             message: {

@@ -17,8 +17,8 @@ final class HealthDataListViewModel {
 
     private(set) var state: ViewState = .initial
     private(set) var listData: [HealthMetric] = []
-    
-    var showAddDataSheet: Bool = false
+
+    var showAddDataSheet = false
 
     init(healthKitManager: HealthKitManager, healthKitData: HealthKitData) {
         self.healthKitManager = healthKitManager
@@ -30,12 +30,12 @@ final class HealthDataListViewModel {
         syncListData()
         state = listData.isEmpty ? .initial : .success
     }
-    
+
     func onAddSuccess() {
         syncListData()
-        state = self.listData.isEmpty ? .initial : .success
+        state = listData.isEmpty ? .initial : .success
     }
-    
+
     func onAddButtonTapped() {
         showAddDataSheet = true
     }

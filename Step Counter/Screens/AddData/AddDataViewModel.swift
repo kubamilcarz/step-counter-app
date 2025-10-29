@@ -12,7 +12,7 @@ import HealthKit
 final class AddDataViewModel {
     private let healthKitManager: HealthKitManager
     private let healthKitData: HealthKitData
-    
+
     init(healthKitManager: HealthKitManager, healthKitData: HealthKitData) {
         self.healthKitManager = healthKitManager
         self.healthKitData = healthKitData
@@ -87,15 +87,14 @@ final class AddDataViewModel {
             } catch {
                 guard !Task.isCancelled else { return }
 
-                let errorToHandle: STError
-                if let stError = error as? STError {
-                    errorToHandle = stError
+                let errorToHandle: STError = if let stError = error as? STError {
+                    stError
                 } else if let hkError = error as? HKError, hkError.code == .errorAuthorizationDenied {
-                    errorToHandle = .sharingDenied(quantityType: metric.title.lowercased())
+                    .sharingDenied(quantityType: metric.title.lowercased())
                 } else if (error as NSError).code == HKError.errorInvalidArgument.rawValue {
-                    errorToHandle = .invalidValue
+                    .invalidValue
                 } else {
-                    errorToHandle = .unableToCompleteRequest
+                    .unableToCompleteRequest
                 }
 
                 state = .error
@@ -112,7 +111,7 @@ final class AddDataViewModel {
         valueToAdd = ""
         state = .initial
         showAlert = false
-        
+
         onDismiss()
     }
 }
