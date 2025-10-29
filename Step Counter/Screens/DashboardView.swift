@@ -8,21 +8,18 @@
 import SwiftUI
 
 struct DashboardView: View {
-    @Environment(HealthKitData.self) private var healthKitData
-    @Environment(HealthKitManager.self) private var healthKitManager
     @Namespace private var zoomTransition
 
-    @State private var selectedStat: HealthMetricContext = .steps
-    @State private var showPermissionPriming = false
-    @State private var showAlert = false
-    @State private var showCoachSheet = false
-    @State private var fetchError: STError = .noData
+    @Environment(HealthKitData.self) private var healthKitData
+    @Environment(HealthKitManager.self) private var healthKitManager
+    
+    @State var viewModel: DashboardViewModel
 
     var navbarTint: Color {
         if #available(iOS 26.0, *) {
             .primary
         } else {
-            selectedStat.color
+            viewModel.selectedMetric.color
         }
     }
 
@@ -30,14 +27,14 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    Picker("Selected Stat", selection: $selectedStat) {
+                    Picker("Selected Stat", selection: $viewModel.selectedMetric) {
                         ForEach(HealthMetricContext.allCases) { metric in
                             Text(metric.title)
                         }
                     }
                     .pickerStyle(.segmented)
 
-                    switch selectedStat {
+                    switch viewModel.selectedMetric {
                     case .steps:
                         StepBarChart(
                             chartData: ChartHelper.convert(data: healthKitData.stepData)
@@ -59,8 +56,8 @@ struct DashboardView: View {
                 }
                 .padding(16)
             }
-            .gradientBackground(using: selectedStat.color)
-            .onAppear(perform: fetchHealthData)
+            .gradientBackground(using: viewModel.selectedMetric.color)
+            .onAppear(perform: viewModel.onAppear)
             .navigationTitle("Dashboard")
             .toolbarTitleDisplayMode(.inlineLarge)
             .navigationDestination(for: HealthMetricContext.self) { metric in
@@ -69,8 +66,8 @@ struct DashboardView: View {
                     config: .init(metric: metric)
                 )
             }
-            .fullScreenCover(isPresented: $showPermissionPriming) {
-                fetchHealthData()
+            .fullScreenCover(isPresented: $viewModel.shouldShowPermissionPriming) {
+                viewModel.onPermissionSheetDismissed()
             } content: {
                 HealthKitPermissionPrimingView(
                     viewModel: HealthKitPermissionPrimingViewModel(
@@ -78,18 +75,18 @@ struct DashboardView: View {
                     )
                 )
             }
-            .backportCoachSheet(isPresented: $showCoachSheet, namespace: zoomTransition)
-            .alert(isPresented: $showAlert, error: fetchError) { _ in
+            .backportCoachSheet(isPresented: $viewModel.shouldShowCoachSheet, namespace: zoomTransition)
+            .alert(isPresented: $viewModel.shouldShowAlert, error: viewModel.fetchError) { _ in
                 // actions
-            } message: { fetchError in
-                Text(fetchError.failureReason)
+            } message: { error in
+                Text(error.failureReason)
             }
             .toolbar {
                 if #available(iOS 26.0, *) {
                     ToolbarItem(placement: .topBarTrailing) {
                         if DataAnalyzer.shared.isAvailable {
                             Button("Analyze data", systemImage: "apple.intelligence") {
-                                showCoachSheet = true
+                                viewModel.shouldShowCoachSheet = true
                             }
                         }
                     }
@@ -99,32 +96,18 @@ struct DashboardView: View {
         }
         .tint(navbarTint)
     }
-
-    private func fetchHealthData() {
-        Task {
-            do {
-                async let steps = healthKitManager.fetchStepCount()
-                async let weightsForLineChart = healthKitManager.fetchWeightsCount(daysBack: 28)
-                async let weightsForDiffBarChart = healthKitManager.fetchWeightsCount(daysBack: 29)
-
-                healthKitData.stepData = try await steps
-                healthKitData.weightData = try await weightsForLineChart
-                healthKitData.weightDiffData = try await weightsForDiffBarChart
-            } catch STError.authNotDetermined {
-                showPermissionPriming = true
-            } catch STError.noData {
-                fetchError = .noData
-                showAlert = true
-            } catch {
-                fetchError = .unableToCompleteRequest
-                showAlert = true
-            }
-        }
-    }
 }
 
 #Preview {
-    DashboardView()
-        .environment(HealthKitManager())
-        .environment(HealthKitData())
+    let healthKitManager = HealthKitManager()
+    let healthKitData = HealthKitData()
+    
+    return DashboardView(
+        viewModel: DashboardViewModel(
+            healthKitManager: healthKitManager,
+            healthKitData: healthKitData
+        )
+    )
+    .environment(healthKitManager)
+    .environment(healthKitData)
 }

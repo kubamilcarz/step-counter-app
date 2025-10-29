@@ -16,9 +16,14 @@ struct StepCounterApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DashboardView()
-                .environment(healthKitData)
-                .environment(healthKitManager)
+            DashboardView(
+                viewModel: DashboardViewModel(
+                    healthKitManager: healthKitManager,
+                    healthKitData: healthKitData
+                )
+            )
+            .environment(healthKitData)
+            .environment(healthKitManager)
         }
     }
 }
