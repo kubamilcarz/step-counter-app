@@ -153,6 +153,7 @@
 			knownRegions = (
 				en,
 				Base,
+				pl,
 			);
 			mainGroup = C87BCF6A2E97FE2B002A5510;
 			minimizedProjectReferenceProxies = 1;
@@ -340,6 +341,7 @@
 				OTHER_SWIFT_FLAGS = "-DMOCK";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Mock;
@@ -465,6 +467,7 @@
 				OTHER_SWIFT_FLAGS = "-DDEV";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -523,6 +526,7 @@
 				OTHER_SWIFT_FLAGS = "-DPROD";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
