@@ -9,7 +9,7 @@ import Foundation
 
 struct Dependencies {
     private let container: DependencyContainer
-    
+
     let healthKitManager: HealthKitManager
     let healthKitData: HealthKitData
 
@@ -25,9 +25,9 @@ struct Dependencies {
             // prod-specific implementation
             break
         }
-        
-        self.healthKitManager = HealthKitManager()
-        self.healthKitData = HealthKitData()
+
+        healthKitManager = HealthKitManager()
+        healthKitData = HealthKitData()
 
         let container = DependencyContainer()
         container.register(HealthKitManager.self, service: healthKitManager)

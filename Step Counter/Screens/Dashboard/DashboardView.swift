@@ -12,7 +12,7 @@ struct DashboardView: View {
 
     @Environment(HealthKitData.self) private var healthKitData
     @Environment(HealthKitManager.self) private var healthKitManager
-    
+
     @State var viewModel: DashboardViewModel
 
     var navbarTint: Color {
@@ -101,7 +101,7 @@ struct DashboardView: View {
 #Preview {
     let healthKitManager = HealthKitManager()
     let healthKitData = HealthKitData()
-    
+
     return DashboardView(
         viewModel: DashboardViewModel(
             healthKitManager: healthKitManager,
