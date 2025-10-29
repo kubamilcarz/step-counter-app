@@ -11,14 +11,16 @@ import SwiftUI
 struct StepCounterApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
-    let healthKitData = HealthKitData()
-    let healthKitManager = HealthKitManager()
-
     var body: some Scene {
         WindowGroup {
-            DashboardView()
-                .environment(healthKitData)
-                .environment(healthKitManager)
+            DashboardView(
+                viewModel: DashboardViewModel(
+                    healthKitManager: delegate.dependencies.healthKitManager,
+                    healthKitData: delegate.dependencies.healthKitData
+                )
+            )
+            .environment(delegate.dependencies.healthKitData)
+            .environment(delegate.dependencies.healthKitManager)
         }
     }
 }

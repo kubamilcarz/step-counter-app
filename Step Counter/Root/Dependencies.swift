@@ -10,6 +10,9 @@ import Foundation
 struct Dependencies {
     private let container: DependencyContainer
 
+    let healthKitManager: HealthKitManager
+    let healthKitData: HealthKitData
+
     init(config: BuildConfiguration) {
         switch config {
         case .mock:
@@ -23,8 +26,12 @@ struct Dependencies {
             break
         }
 
+        healthKitManager = HealthKitManager()
+        healthKitData = HealthKitData()
+
         let container = DependencyContainer()
-        // register dependecies
+        container.register(HealthKitManager.self, service: healthKitManager)
+        container.register(HealthKitData.self, service: healthKitData)
         self.container = container
     }
 }
