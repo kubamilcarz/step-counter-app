@@ -1,5 +1,5 @@
 //
-//  HealthIntelligenceRepository.swift
+//  HKIntelligenceRepository.swift
 //  Step Counter
 //
 //  Created by Kuba Milcarz on 28/10/2025.
@@ -9,19 +9,10 @@ import Foundation
 import FoundationModels
 
 @available(iOS 26.0, *)
-protocol DataIntelligenceRepository: Sendable {
-    var isAvailable: Bool { get }
-    var isThinking: Bool { get }
-    var message: String { get }
-    
-    func analyzeDataStream() -> AsyncThrowingStream<String.PartiallyGenerated, Error>
-}
-
-@available(iOS 26.0, *)
 @Observable
 final class HKIntelligenceRepository: DataIntelligenceRepository {
     let model: SystemLanguageModel = .default
-    var coachMessage: String.PartiallyGenerated?
+    var coachMessage: String?
     var isThinking = false
 
     var isAvailable: Bool {
@@ -29,10 +20,10 @@ final class HKIntelligenceRepository: DataIntelligenceRepository {
     }
     
     var message: String {
-        String(describing: coachMessage)
+        coachMessage ?? ""
     }
 
-    func analyzeDataStream() -> AsyncThrowingStream<String.PartiallyGenerated, Error> {
+    func analyzeDataStream() -> AsyncThrowingStream<StreamResponse, Error> {
         isThinking = true
         coachMessage = nil
 
@@ -54,12 +45,15 @@ final class HKIntelligenceRepository: DataIntelligenceRepository {
         return AsyncThrowingStream { continuation in
             let streamTask = Task {
                 do {
-                    for try await partial in responseStream where partial.content != "null" {
+                    for try await partial in responseStream {
+                        let text = String(describing: partial.content)
+                        guard text != "null" else { continue }
+
                         await MainActor.run {
-                            self.coachMessage = partial.content
+                            self.coachMessage = text
                             self.isThinking = false
                         }
-                        continuation.yield(partial.content)
+                        continuation.yield(.init(text: text))
                     }
 
                     await MainActor.run {

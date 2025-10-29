@@ -72,8 +72,7 @@ final class CoachViewModel {
                 for try await partial in stream {
                     guard !Task.isCancelled else { return }
 
-                    let text = String(describing: partial)
-                    coachMessage = text
+                    coachMessage = partial.text
 
                     if !receivedMessage {
                         state = .success
