@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct AddDataView: View {
     @Environment(\.dismiss) private var dismiss
@@ -100,8 +99,8 @@ struct AddDataView: View {
 #Preview {
     AddDataView(
         viewModel: AddDataViewModel(
-            healthKitManager: HealthKitManager(),
-            healthKitData: HealthKitData()
+            healthDataRepo: MockHealthDataRepository(),
+            healthDataStore: HealthDataStore()
         ),
         config: AddDataViewConfig(
             metric: .steps,

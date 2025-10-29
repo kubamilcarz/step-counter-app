@@ -5,12 +5,13 @@
 //  Created by Kuba Milcarz on 29/10/2025.
 //
 
-import Observation
-import SwiftUI
+import Foundation
 
 @Observable
 final class HealthDataListViewModel {
-    private let healthKitData: HealthKitData
+    let healthDataStore: HealthDataStore
+    // Only used to initialize sub-views
+    let healthDataRepo: HealthDataRepository
 
     private(set) var metric: HealthMetricContext = .steps
 
@@ -19,8 +20,9 @@ final class HealthDataListViewModel {
 
     var showAddDataSheet = false
 
-    init(healthKitData: HealthKitData) {
-        self.healthKitData = healthKitData
+    init(healthDataRepo: HealthDataRepository, healthDataStore: HealthDataStore) {
+        self.healthDataRepo = healthDataRepo
+        self.healthDataStore = healthDataStore
     }
 
     func onAppear(config: HealthDataListViewConfig) {
@@ -44,8 +46,8 @@ final class HealthDataListViewModel {
 
     private func sourceData(for metric: HealthMetricContext) -> [HealthMetric] {
         switch metric {
-        case .steps: healthKitData.stepData
-        case .weight: healthKitData.weightData
+        case .steps: healthDataStore.stepData
+        case .weight: healthDataStore.weightData
         }
     }
 }

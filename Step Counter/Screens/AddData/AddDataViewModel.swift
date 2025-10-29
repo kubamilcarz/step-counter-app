@@ -6,16 +6,15 @@
 //
 
 import Foundation
-import HealthKit
 
 @Observable
 final class AddDataViewModel {
-    private let healthKitManager: HealthKitManager
-    private let healthKitData: HealthKitData
+    private let healthDataRepo: HealthDataRepository
+    private let healthDataStore: HealthDataStore
 
-    init(healthKitManager: HealthKitManager, healthKitData: HealthKitData) {
-        self.healthKitManager = healthKitManager
-        self.healthKitData = healthKitData
+    init(healthDataRepo: HealthDataRepository, healthDataStore: HealthDataStore) {
+        self.healthDataRepo = healthDataRepo
+        self.healthDataStore = healthDataStore
     }
 
     @ObservationIgnored
@@ -61,21 +60,21 @@ final class AddDataViewModel {
 
             do {
                 if metric == .steps {
-                    try await healthKitManager.addStepData(for: selectedDate, value: value)
-                    let steps = try await healthKitManager.fetchStepCount()
+                    try await healthDataRepo.addStepData(for: selectedDate, value: value)
+                    let steps = try await healthDataRepo.fetchStepCount()
 
-                    healthKitData.stepData = steps
+                    healthDataStore.stepData = steps
                 } else {
-                    try await healthKitManager.addWeightData(for: selectedDate, value: value)
+                    try await healthDataRepo.addWeightData(for: selectedDate, value: value)
 
-                    async let weightsForChart = healthKitManager.fetchWeightsCount(daysBack: 28)
-                    async let weightsForDiff = healthKitManager.fetchWeightsCount(daysBack: 29)
+                    async let weightsForChart = healthDataRepo.fetchWeightsCount(daysBack: 28)
+                    async let weightsForDiff = healthDataRepo.fetchWeightsCount(daysBack: 29)
 
                     let updatedWeights = try await weightsForChart
                     let updatedDiffs = try await weightsForDiff
 
-                    healthKitData.weightData = updatedWeights
-                    healthKitData.weightDiffData = updatedDiffs
+                    healthDataStore.weightData = updatedWeights
+                    healthDataStore.weightDiffData = updatedDiffs
                 }
 
                 state = .success
@@ -89,10 +88,6 @@ final class AddDataViewModel {
 
                 let errorToHandle: STError = if let stError = error as? STError {
                     stError
-                } else if let hkError = error as? HKError, hkError.code == .errorAuthorizationDenied {
-                    .sharingDenied(quantityType: metric.title.lowercased())
-                } else if (error as NSError).code == HKError.errorInvalidArgument.rawValue {
-                    .invalidValue
                 } else {
                     .unableToCompleteRequest
                 }

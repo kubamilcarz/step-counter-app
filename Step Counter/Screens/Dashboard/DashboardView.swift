@@ -10,9 +10,6 @@ import SwiftUI
 struct DashboardView: View {
     @Namespace private var zoomTransition
 
-    @Environment(HealthKitData.self) private var healthKitData
-    @Environment(HealthKitManager.self) private var healthKitManager
-
     @State var viewModel: DashboardViewModel
 
     var navbarTint: Color {
@@ -37,20 +34,20 @@ struct DashboardView: View {
                     switch viewModel.selectedMetric {
                     case .steps:
                         StepBarChart(
-                            chartData: ChartHelper.convert(data: healthKitData.stepData)
+                            chartData: ChartHelper.convert(data: viewModel.stepData)
                         )
 
                         StepPieChart(
-                            chartData: ChartHelper.averageWeekdayCount(for: healthKitData.stepData)
+                            chartData: ChartHelper.averageWeekdayCount(for: viewModel.stepData)
                         )
 
                     case .weight:
                         WeightLineChart(
-                            chartData: ChartHelper.convert(data: healthKitData.weightData)
+                            chartData: ChartHelper.convert(data: viewModel.weightData)
                         )
 
                         WeightDiffBarChart(
-                            chartData: ChartHelper.averageDailyWeightDiffs(for: healthKitData.weightDiffData)
+                            chartData: ChartHelper.averageDailyWeightDiffs(for: viewModel.weightDiffData)
                         )
                     }
                 }
@@ -62,7 +59,10 @@ struct DashboardView: View {
             .toolbarTitleDisplayMode(.inlineLarge)
             .navigationDestination(for: HealthMetricContext.self) { metric in
                 HealthDataListView(
-                    viewModel: HealthDataListViewModel(healthKitData: healthKitData),
+                    viewModel: HealthDataListViewModel(
+                        healthDataRepo: viewModel.healthDataRepo,
+                        healthDataStore: viewModel.healthDataStore
+                    ),
                     config: .init(metric: metric)
                 )
             }
@@ -71,11 +71,19 @@ struct DashboardView: View {
             } content: {
                 HealthKitPermissionPrimingView(
                     viewModel: HealthKitPermissionPrimingViewModel(
-                        healthKitManager: healthKitManager
+                        healthDataRepo: viewModel.healthDataRepo
                     )
                 )
             }
-            .backportCoachSheet(isPresented: $viewModel.shouldShowCoachSheet, namespace: zoomTransition)
+            .sheet(isPresented: $viewModel.showCoachSheet) {
+                if #available(iOS 26.0, *) {
+                    CoachView(viewModel: CoachViewModel(dataIntelligenceRepo: viewModel.dataIntelligenceRepo))
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationContentInteraction(.scrolls)
+                        .navigationTransition(.zoom(sourceID: "coachView", in: zoomTransition))
+                }
+            }
             .alert(isPresented: $viewModel.shouldShowAlert, error: viewModel.fetchError) { _ in
                 // actions
             } message: { error in
@@ -84,9 +92,9 @@ struct DashboardView: View {
             .toolbar {
                 if #available(iOS 26.0, *) {
                     ToolbarItem(placement: .topBarTrailing) {
-                        if DataAnalyzer.shared.isAvailable {
+                        if viewModel.dataIntelligenceRepo.isAvailable {
                             Button("Analyze data", systemImage: "apple.intelligence") {
-                                viewModel.shouldShowCoachSheet = true
+                                viewModel.showCoachSheet = true
                             }
                         }
                     }
@@ -99,15 +107,11 @@ struct DashboardView: View {
 }
 
 #Preview {
-    let healthKitManager = HealthKitManager()
-    let healthKitData = HealthKitData()
-
-    return DashboardView(
+    DashboardView(
         viewModel: DashboardViewModel(
-            healthKitManager: healthKitManager,
-            healthKitData: healthKitData
+            healthDataRepo: MockHealthDataRepository(),
+            healthDataStore: HealthDataStore(),
+            dataIntelligenceRepo: MockIntelligenceRepository()
         )
     )
-    .environment(healthKitManager)
-    .environment(healthKitData)
 }

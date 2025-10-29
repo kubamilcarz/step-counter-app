@@ -10,28 +10,47 @@ import Foundation
 struct Dependencies {
     private let container: DependencyContainer
 
-    let healthKitManager: HealthKitManager
-    let healthKitData: HealthKitData
+    let healthDataRepo: HealthDataRepository
+    let healthDataStore: HealthDataStore
+    let dataIntelligenceRepo: DataIntelligenceRepository
 
     init(config: BuildConfiguration) {
         switch config {
         case .mock:
-            // mock-specific implementation
-            break
+            healthDataRepo = MockHealthDataRepository()
+            dataIntelligenceRepo = MockIntelligenceRepository()
+
         case .dev:
-            // dev-specific implementation
-            break
+            healthDataRepo = HKHealthDataRepository()
+
+            if #available(iOS 26.0, *) {
+                dataIntelligenceRepo = HKIntelligenceRepository()
+            } else {
+                dataIntelligenceRepo = MockIntelligenceRepository()
+            }
+
         case .prod:
-            // prod-specific implementation
-            break
+            healthDataRepo = HKHealthDataRepository()
+
+            if #available(iOS 26.0, *) {
+                dataIntelligenceRepo = HKIntelligenceRepository()
+            } else {
+                dataIntelligenceRepo = MockIntelligenceRepository()
+            }
         }
 
-        healthKitManager = HealthKitManager()
-        healthKitData = HealthKitData()
+        // MARK: - Shared
+
+        healthDataStore = HealthDataStore()
+
+        // MARK: - Container Registeration
 
         let container = DependencyContainer()
-        container.register(HealthKitManager.self, service: healthKitManager)
-        container.register(HealthKitData.self, service: healthKitData)
+
+        container.register(HealthDataRepository.self, service: healthDataRepo)
+        container.register(HealthDataStore.self, service: healthDataStore)
+        container.register(DataIntelligenceRepository.self, service: dataIntelligenceRepo)
+
         self.container = container
     }
 }

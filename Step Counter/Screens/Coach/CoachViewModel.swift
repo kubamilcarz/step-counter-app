@@ -5,13 +5,12 @@
 //  Created by Kuba Milcarz on 28/10/2025.
 //
 
-import Observation
-import SwiftUI
+import Foundation
 
 @available(iOS 26.0, *)
 @Observable
 final class CoachViewModel {
-    private let analyzer: DataAnalyzer
+    private let dataIntelligenceRepo: DataIntelligenceRepository
 
     @ObservationIgnored
     private var loadTask: Task<Void, Never>?
@@ -20,16 +19,16 @@ final class CoachViewModel {
     private(set) var errorMessage: String?
     private(set) var coachMessage: String?
 
-    init(analyzer: DataAnalyzer) {
-        self.analyzer = analyzer
+    init(dataIntelligenceRepo: DataIntelligenceRepository) {
+        self.dataIntelligenceRepo = dataIntelligenceRepo
     }
 
     deinit {
         loadTask?.cancel()
     }
 
-    var isThinking: Bool { analyzer.isThinking }
-    var isAvailable: Bool { analyzer.isAvailable }
+    var isThinking: Bool { dataIntelligenceRepo.isThinking }
+    var isAvailable: Bool { dataIntelligenceRepo.isAvailable }
 
     func onCloseButtonTapped(onDismiss: @escaping () -> Void) {
         onDismiss()
@@ -43,6 +42,10 @@ final class CoachViewModel {
             return
         }
         loadCoachInsights()
+    }
+
+    func onViewDisappear() {
+        dataIntelligenceRepo.clearMessage()
     }
 
     func onRetryButtonTapped() {
@@ -66,15 +69,14 @@ final class CoachViewModel {
             defer { self.loadTask = nil }
 
             do {
-                let stream = analyzer.analyzeHealthDataStream()
+                let stream = dataIntelligenceRepo.analyzeDataStream()
 
                 var receivedMessage = false
 
                 for try await partial in stream {
                     guard !Task.isCancelled else { return }
 
-                    let text = String(describing: partial)
-                    coachMessage = text
+                    coachMessage = partial.text
 
                     if !receivedMessage {
                         state = .success

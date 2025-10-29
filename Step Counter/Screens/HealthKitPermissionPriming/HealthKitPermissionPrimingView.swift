@@ -5,7 +5,6 @@
 //  Created by Kuba Milcarz on 09/10/2025.
 //
 
-import Observation
 import SwiftUI
 
 struct HealthKitPermissionPrimingView: View {
@@ -81,7 +80,8 @@ struct HealthKitPermissionPrimingView: View {
 #Preview {
     HealthKitPermissionPrimingView(
         viewModel: HealthKitPermissionPrimingViewModel(
-            healthKitManager: HealthKitManager()
+            // TODO: Implement mocking different results
+            healthDataRepo: MockHealthDataRepository()
         )
     )
 }

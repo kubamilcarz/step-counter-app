@@ -15,12 +15,11 @@ struct StepCounterApp: App {
         WindowGroup {
             DashboardView(
                 viewModel: DashboardViewModel(
-                    healthKitManager: delegate.dependencies.healthKitManager,
-                    healthKitData: delegate.dependencies.healthKitData
+                    healthDataRepo: delegate.dependencies.healthDataRepo,
+                    healthDataStore: delegate.dependencies.healthDataStore,
+                    dataIntelligenceRepo: delegate.dependencies.dataIntelligenceRepo
                 )
             )
-            .environment(delegate.dependencies.healthKitData)
-            .environment(delegate.dependencies.healthKitManager)
         }
     }
 }

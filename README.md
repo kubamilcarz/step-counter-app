@@ -33,7 +33,7 @@ Step Tracker also allows you to upload new step or weight data to the Apple Heal
 ## Localization & Polish QA Loop
 
 * All user-facing strings live in `Step Counter/Utilities/Localizable.xcstrings`, managed through Xcode string catalogs. English is the source language and Polish (`pl`) translations cover every chart label, and alert (for example `"%lld steps" → "%lld kroków"`).
-* 
+
 ## Animated Swift Charts
 
 [Watch: Animated Charts Demo](https://github.com/kubamilcarz/step-counter-app/blob/59fa57fb9dd91bf3b838f5fdb29e060cf07702c4/readme-assets/readme-animated-charts.mov)

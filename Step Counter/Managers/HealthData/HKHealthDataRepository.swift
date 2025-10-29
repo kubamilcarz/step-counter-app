@@ -1,43 +1,26 @@
 //
-//  HealthKitManager.swift
+//  HKHealthDataRepository.swift
 //  Step Counter
 //
-//  Created by Kuba Milcarz on 09/10/2025.
+//  Created by Kuba Milcarz on 29/10/2025.
 //
 
 import Foundation
 import HealthKit
-import Observation
-
-/// Observable container for cached HealthKit data.
-///
-/// Separates mutable state from `HealthKitManager` operations for Swift 6 concurrency.
-/// Inject via SwiftUI environment and update after fetching from `HealthKitManager`.
-@Observable
-final class HealthKitData: Sendable {
-    /// Cached step count data (typically 28 days).
-    var stepData: [HealthMetric] = []
-
-    /// Cached weight data for line charts (typically 28 days).
-    var weightData: [HealthMetric] = []
-
-    /// Cached weight data for difference calculations (29 days - one extra for baseline).
-    var weightDiffData: [HealthMetric] = []
-}
 
 /// Handles all HealthKit data fetching and writing operations.
 ///
 /// Stateless and thread-safe. Designed to work with `HealthKitData` for state storage.
 /// Requires HealthKit authorization before use.
 @Observable
-final class HealthKitManager: Sendable {
+final class HKHealthDataRepository: HealthDataRepository {
     // MARK: - Properties
 
     /// HealthKit store for all read/write operations.
-    let store = HKHealthStore()
+    private let store = HKHealthStore()
 
     /// HealthKit quantity types this app accesses (stepCount, bodyMass).
-    let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
+    private let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
 
     // MARK: - Authorization
 
@@ -83,7 +66,7 @@ final class HealthKitManager: Sendable {
             throw STError.authNotDetermined
         }
 
-        let interval = createDateInterval(from: .now, daysBack: 28)
+        let interval = Date.now.createDateInterval(daysBack: 28)
 
         let queryPredicate = HKQuery.predicateForSamples(withStart: interval.start, end: interval.end)
         let samplePredicate = HKSamplePredicate.quantitySample(
@@ -121,7 +104,7 @@ final class HealthKitManager: Sendable {
             throw STError.authNotDetermined
         }
 
-        let interval = createDateInterval(from: .now, daysBack: daysBack)
+        let interval = Date.now.createDateInterval(daysBack: daysBack)
 
         let queryPredicate = HKQuery.predicateForSamples(withStart: interval.start, end: interval.end)
         let samplePredicate = HKSamplePredicate.quantitySample(
@@ -220,17 +203,6 @@ final class HealthKitManager: Sendable {
         } catch {
             throw STError.unableToCompleteRequest
         }
-    }
-
-    // MARK: - Helper Methods
-
-    /// Creates a date interval spanning from `daysBack` days ago to tomorrow.
-    private func createDateInterval(from date: Date, daysBack: Int) -> DateInterval {
-        let calendar = Calendar.current
-        let startOfEndDate = calendar.startOfDay(for: date)
-        let endDate = calendar.date(byAdding: .day, value: 1, to: startOfEndDate)!
-        let startDate = calendar.date(byAdding: .day, value: -daysBack, to: endDate)!
-        return DateInterval(start: startDate, end: endDate)
     }
 
     // MARK: - Development & Testing

@@ -1,5 +1,5 @@
 //
-//  DataAnalyzer.swift
+//  HKIntelligenceRepository.swift
 //  Step Counter
 //
 //  Created by Kuba Milcarz on 28/10/2025.
@@ -10,25 +10,25 @@ import FoundationModels
 
 @available(iOS 26.0, *)
 @Observable
-final class DataAnalyzer {
-    static let shared = DataAnalyzer()
-
+final class HKIntelligenceRepository: DataIntelligenceRepository {
     let model: SystemLanguageModel = .default
-    var coachMessage: String.PartiallyGenerated?
+    var coachMessage: String?
     var isThinking = false
-
-    private init() {}
 
     var isAvailable: Bool {
         model.isAvailable
     }
 
-    func analyzeHealthDataStream() -> AsyncThrowingStream<String.PartiallyGenerated, Error> {
+    var message: String {
+        coachMessage ?? ""
+    }
+
+    func analyzeDataStream() -> AsyncThrowingStream<StreamResponse, Error> {
         isThinking = true
         coachMessage = nil
 
         let session = LanguageModelSession(
-            tools: [HealthDataTool()],
+            tools: [HealthDataTool(healthDataRepository: HKHealthDataRepository())],
             instructions: "You are a high-energy motivational fitness coach. You love to analyze step count and weight data to surface valuable insights and motivate people along their fitness journey and help them with their fitness goals."
         )
 
@@ -45,12 +45,15 @@ final class DataAnalyzer {
         return AsyncThrowingStream { continuation in
             let streamTask = Task {
                 do {
-                    for try await partial in responseStream where partial.content != "null" {
+                    for try await partial in responseStream {
+                        let text = String(describing: partial.content)
+                        guard text != "null" else { continue }
+
                         await MainActor.run {
-                            self.coachMessage = partial.content
+                            self.coachMessage = text
                             self.isThinking = false
                         }
-                        continuation.yield(partial.content)
+                        continuation.yield(.init(text: text))
                     }
 
                     await MainActor.run {
@@ -71,41 +74,8 @@ final class DataAnalyzer {
             }
         }
     }
-}
 
-@available(iOS 26.0, *)
-struct HealthDataTool: Tool {
-    var name = "fetchStepsAndWeight"
-    var description = "Fetches the user's recent step count and weight data from HealthKit."
-
-    @Generable()
-    struct Arguments {}
-
-    func call(arguments _: Arguments) async throws -> String {
-        let healthKitManager = HealthKitManager()
-
-        let steps = try await healthKitManager.fetchStepCount().map(\.value)
-        let weights = try await healthKitManager.fetchWeightsCount(daysBack: 28).map(\.value)
-
-        let stepsHigh = Int(steps.max() ?? 0)
-        let stepsLow = Int(steps.min() ?? 0)
-        let stepsTotal = Int(steps.reduce(0, +))
-        let stepsAverage = Int((Double(stepsTotal) / Double(steps.count)).rounded(.up))
-
-        let weightsHigh = Int(weights.max() ?? 0)
-        let weightsLow = Int(weights.min() ?? 0)
-        let weightDiff = Int(weights.first ?? 0) - Int(weights.last ?? 0)
-
-        return """
-        stepsHighestValue: \(stepsHigh),
-        stepsLowestValue: \(stepsLow),
-        stepsTotalValue: \(stepsTotal),
-        stepsDailyAverageValue: \(stepsAverage),
-        weightHighestValue: \(weightsHigh),
-        weightLowestValue: \(weightsLow),
-        overallWeightDiff: \(weightDiff),
-        numberOfStepDays: \(steps.count)
-        numberOfWeightDays: \(weights.count)
-        """
+    func clearMessage() {
+        coachMessage = nil
     }
 }

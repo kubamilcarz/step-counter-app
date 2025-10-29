@@ -51,6 +51,7 @@ struct CoachView: View {
         .task {
             viewModel.onAppear()
         }
+        .onDisappear(perform: viewModel.onViewDisappear)
     }
 
     @ViewBuilder private var content: some View {
@@ -114,5 +115,10 @@ struct CoachView: View {
 
 @available(iOS 26.0, *)
 #Preview {
-    CoachView(viewModel: CoachViewModel(analyzer: DataAnalyzer.shared))
+    // TODO: More previews
+    CoachView(
+        viewModel: CoachViewModel(
+            dataIntelligenceRepo: MockIntelligenceRepository()
+        )
+    )
 }
