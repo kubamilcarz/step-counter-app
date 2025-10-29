@@ -34,13 +34,13 @@ enum ChartType {
     var title: String {
         switch self {
         case .stepBar:
-            "Steps"
+            String(localized: "Steps")
         case .stepWeekdayPie:
-            "Averages"
+            String(localized: "Averages")
         case .weightLine:
-            "Weight"
+            String(localized: "Weight")
         case .weightDiffBar:
-            "Average Weight Change"
+            String(localized: "Average Weight Change")
         }
     }
 
@@ -58,26 +58,31 @@ enum ChartType {
     var subtitle: String {
         switch self {
         case let .stepBar(average):
-            "Avg: \(average.formatted()) steps"
+            String(localized: "Avg: \(average.formatted()) steps")
         case .stepWeekdayPie:
-            "Last 28 Days"
+            String(localized: "Last 28 Days")
         case let .weightLine(average):
-            "Avg: \(average.formatted(.number.precision(.fractionLength(1)))) lbs"
+            String(localized: "Avg: \(average.formatted(.number.precision(.fractionLength(1)))) lbs")
         case .weightDiffBar:
-            "Per Weekday (Last 28 Days)"
+            String(localized: "Per Weekday (Last 28 Days)")
         }
     }
 
     var accessabilityLabel: String {
         switch self {
         case let .stepBar(average):
-            "Bar chart, step count, last 28 days, average steps per day: \(average.formatted())"
+            String(localized: "Bar chart, step count, last 28 days, average steps per day: \(average.formatted())")
+
         case .stepWeekdayPie:
-            "Pie chart, average steps per weekday"
+            String(localized: "Pie chart, average steps per weekday")
+
         case let .weightLine(average):
-            "Line chart, weight, average weight: \(average.formatted(.number.precision(.fractionLength(1)))) pounds,  goal weight: 155 pounds"
+            String(
+                localized: "Line chart, weight, average weight: \(average.formatted(.number.precision(.fractionLength(1)))) pounds,  goal weight: 155 pounds"
+            )
+
         case .weightDiffBar:
-            "Bar chart, average weight difference per weekday"
+            String(localized: "Bar chart, average weight difference per weekday")
         }
     }
 }
