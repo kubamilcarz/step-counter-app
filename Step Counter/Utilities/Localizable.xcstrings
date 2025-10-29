@@ -56,7 +56,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Integracja z Apple Health"
+            "value" : "Integracja z Zdrowie"
           }
         }
       }
@@ -220,7 +220,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Połącz z Apple Health"
+            "value" : "Połącz z Zdrowie"
           }
         }
       }
@@ -504,7 +504,14 @@
       }
     },
     "There is no weight data from the Health App." : {
-
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie ma danych dotyczących wagi z aplikacji Zdrowie."
+          }
+        }
+      }
     },
     "Thinking..." : {
       "comment" : "A text indicating that the app is currently processing data.",
@@ -535,7 +542,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aby korzystać z Step Counter z Apple Health, prosimy o udzielenie dostępów do czytania i zapisywania kroków i wagi z poziomu Ustawienia > Zdrowie > Dostęp i Urządzenia > Step Counter.  "
+            "value" : "Aby połączyć Zdrowie z Step Counter, prosimy o udzielenie dostępów do czytania i zapisywania kroków i wagi z poziomu Ustawienia > Zdrowie > Dostęp i Urządzenia > Step Counter.  "
           }
         }
       }
