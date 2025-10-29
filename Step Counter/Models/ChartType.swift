@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+/// Each case provides presentation metadata (title, symbol, subtitle and
+/// accessibility label) and any associated values needed to format them.
+///
+/// Cases
+/// - `stepBar(average:)` — Daily steps bar chart; uses `average` for subtitles.
+/// - `stepWeekdayPie` — Average steps by weekday (summary).
+/// - `weightLine(average:)` — Weight history line chart; `average` formatted to 1 decimal.
+/// - `weightDiffBar` — Average weight change per weekday.
+///
+/// SeeAlso: `HealthMetricContext` — maps chart types to their health metric (steps/weight).
 enum ChartType {
     case stepBar(average: Int)
     case stepWeekdayPie
