@@ -9,10 +9,6 @@ import Foundation
 
 @Observable
 final class MockIntelligenceRepository: DataIntelligenceRepository {
-    enum MockError: Error {
-        case intelligenceUnavailable
-    }
-
     var isAvailable: Bool
     var isThinking: Bool
     var message: String
@@ -57,7 +53,7 @@ final class MockIntelligenceRepository: DataIntelligenceRepository {
             let streamTask = Task {
                 do {
                     guard isAvailable else {
-                        throw MockError.intelligenceUnavailable
+                        throw STError.intelligenceUnavailable
                     }
 
                     if let error = nextError {

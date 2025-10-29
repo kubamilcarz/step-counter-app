@@ -52,6 +52,7 @@ struct CoachView: View {
             viewModel.onAppear()
         }
         .onDisappear(perform: viewModel.onViewDisappear)
+        .tint(.pink)
     }
 
     @ViewBuilder private var content: some View {
@@ -114,11 +115,36 @@ struct CoachView: View {
 }
 
 @available(iOS 26.0, *)
-#Preview {
-    // TODO: More previews
+#Preview("Streaming Success") {
     CoachView(
         viewModel: CoachViewModel(
-            dataIntelligenceRepo: MockIntelligenceRepository()
+            dataIntelligenceRepo: MockIntelligenceRepository(
+                simulatedDelay: 0.1
+            )
+        )
+    )
+}
+
+@available(iOS 26.0, *)
+#Preview("Stream Error") {
+    let repository = MockIntelligenceRepository()
+    repository.nextError = STError.intelligenceUnavailable
+
+    return CoachView(
+        viewModel: CoachViewModel(
+            dataIntelligenceRepo: repository
+        )
+    )
+}
+
+@available(iOS 26.0, *)
+#Preview("Unavailable") {
+    CoachView(
+        viewModel: CoachViewModel(
+            dataIntelligenceRepo: MockIntelligenceRepository(
+                isAvailable: false,
+                message: "Coach Craig is offline right now."
+            )
         )
     )
 }
