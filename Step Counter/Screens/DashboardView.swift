@@ -85,7 +85,10 @@ struct DashboardView: View {
             .navigationTitle("Dashboard")
             .toolbarTitleDisplayMode(.inlineLarge)
             .navigationDestination(for: HealthMetricContext.self) { metric in
-                HealthDataListView(metric: metric)
+                HealthDataListView(
+                    viewModel: HealthDataListViewModel(healthKitData: healthKitData),
+                    config: .init(metric: metric)
+                )
             }
             .fullScreenCover(isPresented: $showPermissionPriming) {
                 fetchHealthData()
