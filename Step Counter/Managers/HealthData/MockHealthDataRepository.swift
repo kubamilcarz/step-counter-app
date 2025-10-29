@@ -13,9 +13,7 @@ final class MockHealthDataRepository: HealthDataRepository {
     private(set) var steps: [HealthMetric] = []
     private(set) var weights: [HealthMetric] = []
     
-    func requestAuthorization() async throws {
-        
-    }
+    func requestAuthorization() async throws {}
     
     func fetchStepCount() async throws -> [HealthMetric] {
         steps

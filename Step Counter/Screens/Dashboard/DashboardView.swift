@@ -75,7 +75,15 @@ struct DashboardView: View {
                     )
                 )
             }
-            .backportCoachSheet(isPresented: $viewModel.shouldShowCoachSheet, namespace: zoomTransition)
+            .sheet(isPresented: $viewModel.showCoachSheet) {
+                if #available(iOS 26.0, *) {
+                    CoachView(viewModel: CoachViewModel(dataIntelligenceRepo: viewModel.dataIntelligenceRepo))
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationContentInteraction(.scrolls)
+                        .navigationTransition(.zoom(sourceID: "coachView", in: zoomTransition))
+                }
+            }
             .alert(isPresented: $viewModel.shouldShowAlert, error: viewModel.fetchError) { _ in
                 // actions
             } message: { error in
@@ -84,9 +92,9 @@ struct DashboardView: View {
             .toolbar {
                 if #available(iOS 26.0, *) {
                     ToolbarItem(placement: .topBarTrailing) {
-                        if DataAnalyzer.shared.isAvailable {
+                        if viewModel.dataIntelligenceRepo.isAvailable {
                             Button("Analyze data", systemImage: "apple.intelligence") {
-                                viewModel.shouldShowCoachSheet = true
+                                viewModel.showCoachSheet = true
                             }
                         }
                     }
@@ -102,7 +110,8 @@ struct DashboardView: View {
     DashboardView(
         viewModel: DashboardViewModel(
             healthDataRepo: MockHealthDataRepository(),
-            healthDataStore: HealthDataStore()
+            healthDataStore: HealthDataStore(),
+            dataIntelligenceRepo: MockIntelligenceRepository()
         )
     )
 }

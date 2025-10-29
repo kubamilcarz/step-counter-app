@@ -9,8 +9,4 @@ import Foundation
 
 struct StreamResponse: Sendable {
     let text: String
-
-    init(text: String) {
-        self.text = text
-    }
 }

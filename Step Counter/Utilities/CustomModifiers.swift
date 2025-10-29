@@ -23,28 +23,6 @@ struct ProminentButton: ViewModifier {
     }
 }
 
-struct BackportCoachSheet: ViewModifier {
-    @Binding var isPresented: Bool
-    var namespace: Namespace.ID
-
-    func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
-            content
-                .sheet(isPresented: $isPresented) {
-                    DataAnalyzer.shared.coachMessage = nil
-                } content: {
-                    CoachView(viewModel: CoachViewModel(analyzer: DataAnalyzer.shared))
-                        .presentationDetents([.medium, .large])
-                        .presentationDragIndicator(.visible)
-                        .presentationContentInteraction(.scrolls)
-                        .navigationTransition(.zoom(sourceID: "coachView", in: namespace))
-                }
-        } else {
-            content
-        }
-    }
-}
-
 extension View {
     func prominentButton(_ color: Color) -> some View {
         modifier(ProminentButton(color: color))
@@ -56,9 +34,5 @@ extension View {
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         ))
-    }
-
-    func backportCoachSheet(isPresented: Binding<Bool>, namespace: Namespace.ID) -> some View {
-        modifier(BackportCoachSheet(isPresented: isPresented, namespace: namespace))
     }
 }

@@ -12,6 +12,7 @@ final class DashboardViewModel {
     // TODO: Temporary not private
     let healthDataRepo: HealthDataRepository
     let healthDataStore: HealthDataStore
+    let dataIntelligenceRepo: DataIntelligenceRepository
 
     @ObservationIgnored
     private var fetchTask: Task<Void, Never>?
@@ -21,7 +22,7 @@ final class DashboardViewModel {
 
     var shouldShowPermissionPriming = false
     var shouldShowAlert = false
-    var shouldShowCoachSheet = false
+    var showCoachSheet = false
     var fetchError: STError = .noData
     
     var stepData: [HealthMetric] {
@@ -36,9 +37,14 @@ final class DashboardViewModel {
         healthDataStore.weightDiffData
     }
 
-    init(healthDataRepo: HealthDataRepository, healthDataStore: HealthDataStore) {
+    init(
+        healthDataRepo: HealthDataRepository,
+        healthDataStore: HealthDataStore,
+        dataIntelligenceRepo: DataIntelligenceRepository
+    ) {
         self.healthDataRepo = healthDataRepo
         self.healthDataStore = healthDataStore
+        self.dataIntelligenceRepo = dataIntelligenceRepo
     }
 
     deinit {
