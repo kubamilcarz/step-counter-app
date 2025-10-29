@@ -87,10 +87,10 @@ struct DashboardView: View {
             .navigationDestination(for: HealthMetricContext.self) { metric in
                 HealthDataListView(
                     viewModel: HealthDataListViewModel(
-                        metric: metric,
                         healthKitManager: healthKitManager,
                         healthKitData: healthKitData
-                    )
+                    ),
+                    config: .init(metric: metric)
                 )
             }
             .fullScreenCover(isPresented: $showPermissionPriming) {

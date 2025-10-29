@@ -9,15 +9,18 @@ import SwiftUI
 
 struct HealthDataListView: View {
     @Namespace private var zoomTransition
+    @Environment(HealthKitManager.self) private var healthKitManager
+    @Environment(HealthKitData.self) private var healthKitData
 
     @State var viewModel: HealthDataListViewModel
-
+    let config: HealthDataListViewConfig
+    
     var body: some View {
         List(viewModel.listData) { data in
             LabeledContent {
                 Text(
                     data.value,
-                    format: .number.precision(.fractionLength(viewModel.metric == .steps ? 0 : 2))
+                    format: .number.precision(.fractionLength(config.metric == .steps ? 0 : 2))
                 )
             } label: {
                 Text(data.date, format: .dateTime.month().day().year())
@@ -27,8 +30,8 @@ struct HealthDataListView: View {
             .accessibilityElement(children: .combine)
         }
         .scrollContentBackground(.hidden)
-        .gradientBackground(using: viewModel.metric.color)
-        .navigationTitle(viewModel.metric.title)
+        .gradientBackground(using: config.metric.color)
+        .navigationTitle(config.metric.title)
         .overlay {
             if viewModel.state == .loading {
                 ProgressView()
@@ -38,41 +41,38 @@ struct HealthDataListView: View {
         .overlay {
             if viewModel.listData.isEmpty {
                 ContentUnavailableView(
-                    "No \(viewModel.metric.title) to Display",
-                    systemImage: viewModel.metric == .steps ? "figure.walk" : "figure"
+                    "No \(config.metric.title) to Display",
+                    systemImage: config.metric == .steps ? "figure.walk" : "figure"
                 )
             }
         }
-        .sheet(isPresented: $viewModel.showAddData) {
+        .sheet(isPresented: $viewModel.showAddDataSheet) {
             if #available(iOS 26.0, *) {
-                addDataView
-                    .presentationDetents([.fraction(0.4)])
-                    .navigationTransition(.zoom(sourceID: "addData", in: zoomTransition))
+                AddDataView(
+                    viewModel: AddDataViewModel(
+                        healthKitManager: healthKitManager,
+                        healthKitData: healthKitData
+                    ),
+                    config: AddDataViewConfig(metric: config.metric, onCompletion: viewModel.onAddSuccess)
+                )
+                .presentationDetents([.fraction(0.4)])
+                .navigationTransition(.zoom(sourceID: "addData", in: zoomTransition))
             } else {
-                addDataView
-                    .presentationDetents([.fraction(0.4)])
+                AddDataView(
+                    viewModel: AddDataViewModel(
+                        healthKitManager: healthKitManager,
+                        healthKitData: healthKitData
+                    ),
+                    config: AddDataViewConfig(metric: config.metric, onCompletion: viewModel.onAddSuccess)
+                )
+                .presentationDetents([.fraction(0.4)])
             }
-        }
-        .alert(isPresented: $viewModel.showAlert, error: viewModel.writeError) { writeError in
-            switch writeError {
-            case .sharingDenied:
-                Button("Settings") {
-                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                }
-
-                Button("Cancel", role: .cancel) {}
-
-            default:
-                EmptyView()
-            }
-        } message: { writeError in
-            Text(writeError.failureReason)
         }
         .toolbar {
             if #available(iOS 26.0, *) {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Add Data", systemImage: "plus") {
-                        viewModel.presentAddData()
+                        viewModel.onAddButtonTapped()
                     }
                     .buttonStyle(.glassProminent)
                     .tint(viewModel.metric.color)
@@ -82,61 +82,13 @@ struct HealthDataListView: View {
             } else {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add Data") {
-                        viewModel.presentAddData()
+                        viewModel.onAddButtonTapped()
                     }
                     .disabled(viewModel.state == .loading)
                 }
             }
         }
-        .onAppear { viewModel.onAppear() }
-    }
-
-    private var addDataView: some View {
-        NavigationStack {
-            Form {
-                DatePicker("Date", selection: $viewModel.addDataDate, displayedComponents: .date)
-
-                LabeledContent(viewModel.metric.title) {
-                    TextField("Value", text: $viewModel.valueToAdd)
-                        .multilineTextAlignment(.trailing)
-                        .frame(width: 140)
-                        .keyboardType(viewModel.metric == .steps ? .numberPad : .decimalPad)
-                }
-            }
-            .navigationTitle(viewModel.metric.title)
-            .scrollContentBackground(.hidden)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if #available(iOS 26.0, *) {
-                        Button("Add Data", systemImage: "checkmark", role: .confirm) {
-                            viewModel.addData()
-                        }
-                        .tint(viewModel.metric.color)
-                        .disabled(viewModel.state == .loading)
-                    } else {
-                        Button("Add Data") {
-                            viewModel.addData()
-                        }
-                        .disabled(viewModel.state == .loading)
-                    }
-                }
-
-                ToolbarItem(placement: .topBarLeading) {
-                    if #available(iOS 26.0, *) {
-                        Button("Dismiss", systemImage: "xmark", role: .close) {
-                            viewModel.dismissAddData()
-                        }
-                        .tint(viewModel.metric.color)
-                        .disabled(viewModel.state == .loading)
-                    } else {
-                        Button("Dismiss") {
-                            viewModel.dismissAddData()
-                        }
-                        .disabled(viewModel.state == .loading)
-                    }
-                }
-            }
-        }
+        .onAppear { viewModel.onAppear(config: config) }
     }
 }
 
@@ -144,10 +96,10 @@ struct HealthDataListView: View {
     NavigationStack {
         HealthDataListView(
             viewModel: HealthDataListViewModel(
-                metric: .steps,
                 healthKitManager: HealthKitManager(),
                 healthKitData: HealthKitData()
-            )
+            ),
+            config: .init(metric: .steps)
         )
     }
 }
@@ -156,10 +108,10 @@ struct HealthDataListView: View {
     NavigationStack {
         HealthDataListView(
             viewModel: HealthDataListViewModel(
-                metric: .weight,
                 healthKitManager: HealthKitManager(),
                 healthKitData: HealthKitData()
-            )
+            ),
+            config: .init(metric: .weight)
         )
     }
 }
