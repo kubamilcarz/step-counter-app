@@ -72,10 +72,15 @@ enum ChartType {
         switch self {
         case let .stepBar(average):
             String(localized: "Bar chart, step count, last 28 days, average steps per day: \(average.formatted())")
+
         case .stepWeekdayPie:
             String(localized: "Pie chart, average steps per weekday")
+
         case let .weightLine(average):
-            String(localized: "Line chart, weight, average weight: \(average.formatted(.number.precision(.fractionLength(1)))) pounds,  goal weight: 155 pounds")
+            String(
+                localized: "Line chart, weight, average weight: \(average.formatted(.number.precision(.fractionLength(1)))) pounds,  goal weight: 155 pounds"
+            )
+
         case .weightDiffBar:
             String(localized: "Bar chart, average weight difference per weekday")
         }

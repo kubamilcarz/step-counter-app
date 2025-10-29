@@ -84,7 +84,8 @@ final class CoachViewModel {
 
                 if !receivedMessage {
                     state = .error
-                    errorMessage = String(localized: "Coach Craig could not generate insights right now. Please try again.")
+                    errorMessage =
+                        String(localized: "Coach Craig could not generate insights right now. Please try again.")
                 }
             } catch {
                 guard !Task.isCancelled else { return }

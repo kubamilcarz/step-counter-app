@@ -44,13 +44,23 @@ enum STError: LocalizedError {
     var failureReason: String {
         switch self {
         case .authNotDetermined:
-            String(localized: "You have not given access to your Health data. Please go to Settings > Health > Data Access & Devices.")
+            String(
+                localized: "You have not given access to your Health data. Please go to Settings > Health > Data Access & Devices."
+            )
+
         case .noData:
             String(localized: "There is no data for this Health statistics.")
+
         case .unableToCompleteRequest:
-            String(localized: "We are unable to complete your request at this time.\n\nPlease try again later or contact support.")
+            String(
+                localized: "We are unable to complete your request at this time.\n\nPlease try again later or contact support."
+            )
+
         case let .sharingDenied(quantityType):
-            String(localized: "You have denied access to upload your \(quantityType) data.\n\nYou can change this in Settings > Health > Data Access & Devices.")
+            String(
+                localized: "You have denied access to upload your \(quantityType) data.\n\nYou can change this in Settings > Health > Data Access & Devices."
+            )
+
         case .invalidValue:
             String(localized: "Must be a numeric value with a maximum of one decimal place.")
         }
