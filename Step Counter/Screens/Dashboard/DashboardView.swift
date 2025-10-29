@@ -11,7 +11,7 @@ struct DashboardView: View {
     @Namespace private var zoomTransition
 
     @Environment(HealthKitData.self) private var healthKitData
-    @Environment(HealthKitManager.self) private var healthKitManager
+    @Environment(HealthDataRepository.self) private var healthKitManager
 
     @State var viewModel: DashboardViewModel
 
@@ -99,7 +99,7 @@ struct DashboardView: View {
 }
 
 #Preview {
-    let healthKitManager = HealthKitManager()
+    let healthKitManager = HKHealthDataRepository()
     let healthKitData = HealthKitData()
 
     return DashboardView(

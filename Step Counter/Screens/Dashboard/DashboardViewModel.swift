@@ -9,7 +9,7 @@ import Foundation
 
 @Observable
 final class DashboardViewModel {
-    private let healthKitManager: HealthKitManager
+    private let healthKitManager: HealthDataRepository
     private let healthKitData: HealthKitData
 
     @ObservationIgnored
@@ -23,7 +23,7 @@ final class DashboardViewModel {
     var shouldShowCoachSheet = false
     var fetchError: STError = .noData
 
-    init(healthKitManager: HealthKitManager, healthKitData: HealthKitData) {
+    init(healthKitManager: HealthDataRepository, healthKitData: HealthKitData) {
         self.healthKitManager = healthKitManager
         self.healthKitData = healthKitData
     }

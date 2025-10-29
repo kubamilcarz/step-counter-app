@@ -28,7 +28,7 @@ final class DataAnalyzer {
         coachMessage = nil
 
         let session = LanguageModelSession(
-            tools: [HealthDataTool()],
+            tools: [HealthDataTool(healthDataRepository: HKHealthDataRepository())],
             instructions: "You are a high-energy motivational fitness coach. You love to analyze step count and weight data to surface valuable insights and motivate people along their fitness journey and help them with their fitness goals."
         )
 
@@ -77,15 +77,19 @@ final class DataAnalyzer {
 struct HealthDataTool: Tool {
     var name = "fetchStepsAndWeight"
     var description = "Fetches the user's recent step count and weight data from HealthKit."
+    
+    private let healthDataRepository: HealthDataRepository
+    
+    init(healthDataRepository: HealthDataRepository) {
+        self.healthDataRepository = healthDataRepository
+    }
 
     @Generable()
     struct Arguments {}
 
     func call(arguments _: Arguments) async throws -> String {
-        let healthKitManager = HealthKitManager()
-
-        let steps = try await healthKitManager.fetchStepCount().map(\.value)
-        let weights = try await healthKitManager.fetchWeightsCount(daysBack: 28).map(\.value)
+        let steps = try await healthDataRepository.fetchStepCount().map(\.value)
+        let weights = try await healthDataRepository.fetchWeightsCount(daysBack: 28).map(\.value)
 
         let stepsHigh = Int(steps.max() ?? 0)
         let stepsLow = Int(steps.min() ?? 0)

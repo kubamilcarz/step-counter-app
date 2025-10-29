@@ -10,8 +10,8 @@ import Foundation
 struct Dependencies {
     private let container: DependencyContainer
 
-    let healthKitManager: HealthKitManager
-    let healthKitData: HealthKitData
+    let healthDataRepository: HealthDataRepository
+    let healthKitData: HealthDataStore
 
     init(config: BuildConfiguration) {
         switch config {
@@ -26,7 +26,7 @@ struct Dependencies {
             break
         }
 
-        healthKitManager = HealthKitManager()
+        healthKitManager = HKHealthDataRepository()
         healthKitData = HealthKitData()
 
         let container = DependencyContainer()

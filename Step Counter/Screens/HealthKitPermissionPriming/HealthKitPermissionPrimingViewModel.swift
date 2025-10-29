@@ -10,13 +10,13 @@ import SwiftUI
 
 @Observable
 final class HealthKitPermissionPrimingViewModel {
-    private let healthKitManager: HealthKitManager
+    private let healthDataRepository: HealthDataRepository
 
     private(set) var state: ViewState = .initial
     var shouldShowErrorAlert = false
 
-    init(healthKitManager: HealthKitManager) {
-        self.healthKitManager = healthKitManager
+    init(healthDataRepository: HealthDataRepository) {
+        self.healthDataRepository = healthDataRepository
     }
 
     let description = String(localized: """
@@ -31,7 +31,7 @@ final class HealthKitPermissionPrimingViewModel {
         shouldShowErrorAlert = false
 
         do {
-            try await healthKitManager.requestAuthorization()
+            try await healthDataRepository.requestAuthorization()
             state = .success
             onDismiss()
         } catch {

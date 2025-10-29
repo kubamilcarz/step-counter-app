@@ -10,10 +10,10 @@ import HealthKit
 
 @Observable
 final class AddDataViewModel {
-    private let healthKitManager: HealthKitManager
+    private let healthKitManager: HealthDataRepository
     private let healthKitData: HealthKitData
 
-    init(healthKitManager: HealthKitManager, healthKitData: HealthKitData) {
+    init(healthKitManager: HealthDataRepository, healthKitData: HealthKitData) {
         self.healthKitManager = healthKitManager
         self.healthKitData = healthKitData
     }

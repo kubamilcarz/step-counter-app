@@ -100,7 +100,7 @@ struct AddDataView: View {
 #Preview {
     AddDataView(
         viewModel: AddDataViewModel(
-            healthKitManager: HealthKitManager(),
+            healthKitManager: HKHealthDataRepository(),
             healthKitData: HealthKitData()
         ),
         config: AddDataViewConfig(

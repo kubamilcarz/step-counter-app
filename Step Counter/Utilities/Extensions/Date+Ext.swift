@@ -22,4 +22,12 @@ extension Date {
     var accessibilityDate: String {
         formatted(.dateTime.month(.wide).day())
     }
+    
+    func createDateInterval(daysBack: Int) -> DateInterval {
+        let calendar = Calendar.current
+        let startOfEndDate = calendar.startOfDay(for: self)
+        let endDate = calendar.date(byAdding: .day, value: 1, to: startOfEndDate)!
+        let startDate = calendar.date(byAdding: .day, value: -daysBack, to: endDate)!
+        return DateInterval(start: startDate, end: endDate)
+    }
 }
