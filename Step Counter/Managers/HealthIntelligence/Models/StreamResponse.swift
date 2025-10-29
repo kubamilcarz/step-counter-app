@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 26.0, *)
 struct StreamResponse: Sendable {
     let text: String
 

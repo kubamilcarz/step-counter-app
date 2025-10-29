@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 26.0, *)
 protocol DataIntelligenceRepository: Sendable {
     var isAvailable: Bool { get }
     var isThinking: Bool { get }

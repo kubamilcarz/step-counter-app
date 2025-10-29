@@ -7,9 +7,13 @@
 
 import Foundation
 
-@available(iOS 26.0, *)
 final class MockIntelligenceRepository: DataIntelligenceRepository {
-    init(isAvailable: Bool, isThinking: Bool, message: String) {
+    
+    init(
+        isAvailable: Bool = true,
+        isThinking: Bool = false,
+        message: String = ""
+    ) {
         self.isAvailable = isAvailable
         self.isThinking = isThinking
         self.message = message
@@ -30,6 +34,10 @@ final class MockIntelligenceRepository: DataIntelligenceRepository {
 
         return AsyncThrowingStream { continuation in
             let task = Task {
+                if #unavailable(iOS 26.0) {
+                    continuation.finish(throwing: STError.unableToCompleteRequest)
+                }
+                
                 do {
                     for text in mockTexts {
                         try await Task.sleep(nanoseconds: 300_000_000)
