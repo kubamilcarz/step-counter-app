@@ -78,7 +78,6 @@ struct AddDataView: View {
                                 dismiss()
                             }
                         }
-                        .tint(viewModel.metric.color)
                         .disabled(viewModel.state == .loading)
                     } else {
                         Button("Dismiss") {
@@ -94,10 +93,6 @@ struct AddDataView: View {
         }
         .onAppear {
             viewModel.onViewAppear(config: config)
-        }
-        .onChange(of: viewModel.state) { _, newValue in
-            guard newValue == .success else { return }
-            dismiss()
         }
     }
 }

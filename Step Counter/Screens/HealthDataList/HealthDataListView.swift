@@ -32,41 +32,11 @@ struct HealthDataListView: View {
         .scrollContentBackground(.hidden)
         .gradientBackground(using: config.metric.color)
         .navigationTitle(config.metric.title)
-        .overlay {
-            if viewModel.state == .loading {
-                ProgressView()
-                    .progressViewStyle(.circular)
-            }
-        }
-        .overlay {
-            if viewModel.listData.isEmpty {
-                ContentUnavailableView(
-                    "No \(config.metric.title) to Display",
-                    systemImage: config.metric == .steps ? "figure.walk" : "figure"
-                )
-            }
+        .overlay(alignment: .center) {
+            overlayContent
         }
         .sheet(isPresented: $viewModel.showAddDataSheet) {
-            if #available(iOS 26.0, *) {
-                AddDataView(
-                    viewModel: AddDataViewModel(
-                        healthKitManager: healthKitManager,
-                        healthKitData: healthKitData
-                    ),
-                    config: AddDataViewConfig(metric: config.metric, onCompletion: viewModel.onAddSuccess)
-                )
-                .presentationDetents([.fraction(0.4)])
-                .navigationTransition(.zoom(sourceID: "addData", in: zoomTransition))
-            } else {
-                AddDataView(
-                    viewModel: AddDataViewModel(
-                        healthKitManager: healthKitManager,
-                        healthKitData: healthKitData
-                    ),
-                    config: AddDataViewConfig(metric: config.metric, onCompletion: viewModel.onAddSuccess)
-                )
-                .presentationDetents([.fraction(0.4)])
-            }
+            addDataSheet()
         }
         .toolbar {
             if #available(iOS 26.0, *) {
@@ -75,7 +45,7 @@ struct HealthDataListView: View {
                         viewModel.onAddButtonTapped()
                     }
                     .buttonStyle(.glassProminent)
-                    .tint(viewModel.metric.color)
+                    .tint(config.metric.color)
                     .disabled(viewModel.state == .loading)
                 }
                 .matchedTransitionSource(id: "addData", in: zoomTransition)
@@ -90,13 +60,44 @@ struct HealthDataListView: View {
         }
         .onAppear { viewModel.onAppear(config: config) }
     }
+
+    @ViewBuilder
+    private var overlayContent: some View {
+        if viewModel.state == .loading {
+            ProgressView()
+                .progressViewStyle(.circular)
+        } else if viewModel.listData.isEmpty {
+            ContentUnavailableView(
+                "No \(config.metric.title) to Display",
+                systemImage: config.metric == .steps ? "figure.walk" : "figure"
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func addDataSheet() -> some View {
+        let addDataView = AddDataView(
+            viewModel: AddDataViewModel(
+                healthKitManager: healthKitManager,
+                healthKitData: healthKitData
+            ),
+            config: AddDataViewConfig(metric: config.metric, onCompletion: viewModel.onAddSuccess)
+        )
+        .presentationDetents([.fraction(0.4)])
+
+        if #available(iOS 26.0, *) {
+            addDataView
+                .navigationTransition(.zoom(sourceID: "addData", in: zoomTransition))
+        } else {
+            addDataView
+        }
+    }
 }
 
 #Preview("Steps List") {
     NavigationStack {
         HealthDataListView(
             viewModel: HealthDataListViewModel(
-                healthKitManager: HealthKitManager(),
                 healthKitData: HealthKitData()
             ),
             config: .init(metric: .steps)
@@ -108,7 +109,6 @@ struct HealthDataListView: View {
     NavigationStack {
         HealthDataListView(
             viewModel: HealthDataListViewModel(
-                healthKitManager: HealthKitManager(),
                 healthKitData: HealthKitData()
             ),
             config: .init(metric: .weight)

@@ -86,10 +86,7 @@ struct DashboardView: View {
             .toolbarTitleDisplayMode(.inlineLarge)
             .navigationDestination(for: HealthMetricContext.self) { metric in
                 HealthDataListView(
-                    viewModel: HealthDataListViewModel(
-                        healthKitManager: healthKitManager,
-                        healthKitData: healthKitData
-                    ),
+                    viewModel: HealthDataListViewModel(healthKitData: healthKitData),
                     config: .init(metric: metric)
                 )
             }

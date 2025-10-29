@@ -10,7 +10,6 @@ import SwiftUI
 
 @Observable
 final class HealthDataListViewModel {
-    private let healthKitManager: HealthKitManager
     private let healthKitData: HealthKitData
 
     private(set) var metric: HealthMetricContext = .steps
@@ -20,8 +19,7 @@ final class HealthDataListViewModel {
 
     var showAddDataSheet = false
 
-    init(healthKitManager: HealthKitManager, healthKitData: HealthKitData) {
-        self.healthKitManager = healthKitManager
+    init(healthKitData: HealthKitData) {
         self.healthKitData = healthKitData
     }
 
@@ -41,11 +39,13 @@ final class HealthDataListViewModel {
     }
 
     private func syncListData() {
+        listData = Array(sourceData(for: metric).reversed())
+    }
+
+    private func sourceData(for metric: HealthMetricContext) -> [HealthMetric] {
         switch metric {
-        case .steps:
-            listData = Array(healthKitData.stepData.reversed())
-        case .weight:
-            listData = Array(healthKitData.weightData.reversed())
+        case .steps: return healthKitData.stepData
+        case .weight: return healthKitData.weightData
         }
     }
 }
