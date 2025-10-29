@@ -89,6 +89,10 @@ final class CoachViewModel {
                     errorMessage =
                         String(localized: "Coach Craig could not generate insights right now. Please try again.")
                 }
+            } catch let error as STError {
+                guard !Task.isCancelled else { return }
+                state = .error
+                errorMessage = error.failureReason
             } catch {
                 guard !Task.isCancelled else { return }
                 state = .error

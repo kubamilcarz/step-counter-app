@@ -10,7 +10,7 @@ import HealthKit
 
 /// Handles all HealthKit data fetching and writing operations.
 ///
-/// Stateless and thread-safe. Designed to work with `HealthKitData` for state storage.
+/// Stateless and thread-safe. Designed to work with `HealthDataStore` for state storage.
 /// Requires HealthKit authorization before use.
 @Observable
 final class HKHealthDataRepository: HealthDataRepository {

@@ -66,7 +66,7 @@ struct DashboardView: View {
                     config: .init(metric: metric)
                 )
             }
-            .fullScreenCover(isPresented: $viewModel.shouldShowPermissionPriming) {
+            .fullScreenCover(isPresented: $viewModel.showPermissionPriming) {
                 viewModel.onPermissionSheetDismissed()
             } content: {
                 HealthKitPermissionPrimingView(
@@ -106,10 +106,30 @@ struct DashboardView: View {
     }
 }
 
-#Preview {
+#Preview("Regular") {
+    DashboardView(
+        viewModel: DashboardViewModel(
+            healthDataRepo: MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights),
+            healthDataStore: HealthDataStore(),
+            dataIntelligenceRepo: MockIntelligenceRepository()
+        )
+    )
+}
+
+#Preview("No Data") {
     DashboardView(
         viewModel: DashboardViewModel(
             healthDataRepo: MockHealthDataRepository(),
+            healthDataStore: HealthDataStore(),
+            dataIntelligenceRepo: MockIntelligenceRepository()
+        )
+    )
+}
+
+#Preview("Not Authorized") {
+    DashboardView(
+        viewModel: DashboardViewModel(
+            healthDataRepo: MockHealthDataRepository(authorizationState: .denied(STError.authNotDetermined)),
             healthDataStore: HealthDataStore(),
             dataIntelligenceRepo: MockIntelligenceRepository()
         )

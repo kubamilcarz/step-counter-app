@@ -17,7 +17,7 @@ struct Dependencies {
     init(config: BuildConfiguration) {
         switch config {
         case .mock:
-            healthDataRepo = MockHealthDataRepository()
+            healthDataRepo = MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights)
             dataIntelligenceRepo = MockIntelligenceRepository()
 
         case .dev:
