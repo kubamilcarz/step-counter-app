@@ -37,7 +37,7 @@ struct DashboardView: View {
                             StepPieChart(
                                 chartData: ChartHelper.averageWeekdayCount(for: viewModel.stepData)
                             )
-                            
+
                             StepBarChart(
                                 chartData: ChartHelper.convert(data: viewModel.stepData)
                             )
@@ -45,7 +45,7 @@ struct DashboardView: View {
                             StepBarChart(
                                 chartData: ChartHelper.convert(data: viewModel.stepData)
                             )
-                            
+
                             StepPieChart(
                                 chartData: ChartHelper.averageWeekdayCount(for: viewModel.stepData)
                             )
@@ -56,7 +56,7 @@ struct DashboardView: View {
                             WeightDiffBarChart(
                                 chartData: ChartHelper.averageDailyWeightDiffs(for: viewModel.weightDiffData)
                             )
-                            
+
                             WeightLineChart(
                                 chartData: ChartHelper.convert(data: viewModel.weightData)
                             )

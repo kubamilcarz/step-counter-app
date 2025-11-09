@@ -36,11 +36,11 @@ final class DashboardViewModel {
     var weightDiffData: [HealthMetric] {
         healthDataStore.weightDiffData
     }
-    
+
     var preselectedMetric: HealthMetricContext {
         abTestRepo.activeTests.appOpenOnHealthMetricTest
     }
-    
+
     var shouldReverseCharts: Bool {
         abTestRepo.activeTests.areChartsReversedTest
     }
@@ -63,7 +63,7 @@ final class DashboardViewModel {
 
     func onAppear() {
         selectedMetric = preselectedMetric
-        
+
         fetchHealthData()
     }
 

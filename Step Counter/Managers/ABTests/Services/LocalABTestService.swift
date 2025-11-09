@@ -18,7 +18,8 @@ final class LocalABTestService: ABTestService {
     private var appOpenOnHealthMetricTest: HealthMetricContext {
         get {
             if let rawValue = userDefaults.string(forKey: DefaultsKey.appOpenOnHealthMetricTest),
-               let metric = HealthMetricContext(rawValue: rawValue) {
+               let metric = HealthMetricContext(rawValue: rawValue)
+            {
                 return metric
             }
 
