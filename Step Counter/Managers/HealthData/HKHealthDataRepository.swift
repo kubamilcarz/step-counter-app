@@ -18,9 +18,14 @@ final class HKHealthDataRepository: HealthDataRepository {
 
     /// HealthKit store for all read/write operations.
     private let store = HKHealthStore()
+    private let logService: LogService?
 
     /// HealthKit quantity types this app accesses (stepCount, bodyMass).
     private let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
+
+    init(logService: LogService?) {
+        self.logService = logService
+    }
 
     // MARK: - Authorization
 
@@ -29,13 +34,18 @@ final class HKHealthDataRepository: HealthDataRepository {
     /// Automatically surfaces the system permission sheet when needed.
     /// - Throws: `STError.unableToCompleteRequest`, `STError.sharingDenied`, or `STError.authNotDetermined`.
     func requestAuthorization() async throws {
+        logService?.trackEvent(event: Event.authorizationStarted)
+
         guard HKHealthStore.isHealthDataAvailable() else {
-            throw STError.unableToCompleteRequest
+            let error = STError.unableToCompleteRequest
+            logService?.trackEvent(event: Event.authorizationFailed(error: error))
+            throw error
         }
 
         do {
             try await store.requestAuthorization(toShare: types, read: types)
         } catch {
+            logService?.trackEvent(event: Event.authorizationFailed(error: error))
             throw STError.unableToCompleteRequest
         }
 
@@ -43,16 +53,24 @@ final class HKHealthDataRepository: HealthDataRepository {
         let weightStatus = store.authorizationStatus(for: HKQuantityType(.bodyMass))
 
         guard stepStatus != .notDetermined, weightStatus != .notDetermined else {
-            throw STError.authNotDetermined
+            let error = STError.authNotDetermined
+            logService?.trackEvent(event: Event.authorizationFailed(error: error))
+            throw error
         }
 
         if stepStatus == .sharingDenied {
-            throw STError.sharingDenied(quantityType: "step count")
+            let error = STError.sharingDenied(quantityType: "step count")
+            logService?.trackEvent(event: Event.authorizationFailed(error: error))
+            throw error
         }
 
         if weightStatus == .sharingDenied {
-            throw STError.sharingDenied(quantityType: "weight")
+            let error = STError.sharingDenied(quantityType: "weight")
+            logService?.trackEvent(event: Event.authorizationFailed(error: error))
+            throw error
         }
+
+        logService?.trackEvent(event: Event.authorizationSucceeded)
     }
 
     // MARK: - Fetch methods
@@ -62,8 +80,12 @@ final class HKHealthDataRepository: HealthDataRepository {
     /// - Returns: Array of daily step count metrics.
     /// - Throws: `STError.authNotDetermined`, `STError.noData`, or `STError.unableToCompleteRequest`
     func fetchStepCount() async throws -> [HealthMetric] {
+        logService?.trackEvent(event: Event.fetchStepsStarted)
+
         guard store.authorizationStatus(for: HKQuantityType(.stepCount)) != .notDetermined else {
-            throw STError.authNotDetermined
+            let error = STError.authNotDetermined
+            logService?.trackEvent(event: Event.fetchStepsFailed(error: error))
+            throw error
         }
 
         let interval = Date.now.createDateInterval(daysBack: 28)
@@ -84,12 +106,18 @@ final class HKHealthDataRepository: HealthDataRepository {
         do {
             let stepsCounts = try await stepsQuery.result(for: store)
 
-            return stepsCounts.statistics().map {
+            let metrics = stepsCounts.statistics().map {
                 HealthMetric(date: $0.startDate, value: $0.sumQuantity()?.doubleValue(for: .count()) ?? 0)
             }
+
+            logService?.trackEvent(event: Event.fetchStepsSucceeded(count: metrics.count))
+            return metrics
         } catch HKError.errorNoData {
-            throw STError.noData
+            let error = STError.noData
+            logService?.trackEvent(event: Event.fetchStepsFailed(error: error))
+            throw error
         } catch {
+            logService?.trackEvent(event: Event.fetchStepsFailed(error: error))
             throw STError.unableToCompleteRequest
         }
     }
@@ -100,8 +128,12 @@ final class HKHealthDataRepository: HealthDataRepository {
     /// - Returns: Array of daily weight metrics in pounds.
     /// - Throws: `STError.authNotDetermined`, `STError.noData`, or `STError.unableToCompleteRequest`
     func fetchWeightsCount(daysBack: Int) async throws -> [HealthMetric] {
+        logService?.trackEvent(event: Event.fetchWeightsStarted(daysBack: daysBack))
+
         guard store.authorizationStatus(for: HKQuantityType(.bodyMass)) != .notDetermined else {
-            throw STError.authNotDetermined
+            let error = STError.authNotDetermined
+            logService?.trackEvent(event: Event.fetchWeightsFailed(error: error))
+            throw error
         }
 
         let interval = Date.now.createDateInterval(daysBack: daysBack)
@@ -122,15 +154,21 @@ final class HKHealthDataRepository: HealthDataRepository {
         do {
             let weightsCount = try await weightsQuery.result(for: store)
 
-            return weightsCount.statistics().map {
+            let metrics = weightsCount.statistics().map {
                 HealthMetric(
                     date: $0.startDate,
                     value: $0.mostRecentQuantity()?.doubleValue(for: .pound()) ?? 0
                 )
             }
+
+            logService?.trackEvent(event: Event.fetchWeightsSucceeded(count: metrics.count))
+            return metrics
         } catch HKError.errorNoData {
-            throw STError.noData
+            let error = STError.noData
+            logService?.trackEvent(event: Event.fetchWeightsFailed(error: error))
+            throw error
         } catch {
+            logService?.trackEvent(event: Event.fetchWeightsFailed(error: error))
             throw STError.unableToCompleteRequest
         }
     }
@@ -144,14 +182,23 @@ final class HKHealthDataRepository: HealthDataRepository {
     ///   - value: Number of steps.
     /// - Throws: `STError.authNotDetermined`, `STError.sharingDenied`, or `STError.unableToCompleteRequest`
     func addStepData(for date: Date, value: Double) async throws {
+        logService?.trackEvent(event: Event.addStepDataStarted(value: value))
+
         let status = store.authorizationStatus(for: HKQuantityType(.stepCount))
         switch status {
         case .notDetermined:
-            throw STError.authNotDetermined
+            let error = STError.authNotDetermined
+            logService?.trackEvent(event: Event.addStepDataFailed(error: error))
+            throw error
+
         case .sharingDenied:
-            throw STError.sharingDenied(quantityType: "step count")
+            let error = STError.sharingDenied(quantityType: "step count")
+            logService?.trackEvent(event: Event.addStepDataFailed(error: error))
+            throw error
+
         case .sharingAuthorized:
             break
+
         @unknown default:
             break
         }
@@ -166,7 +213,9 @@ final class HKHealthDataRepository: HealthDataRepository {
 
         do {
             try await store.save(stepSample)
+            logService?.trackEvent(event: Event.addStepDataSucceeded)
         } catch {
+            logService?.trackEvent(event: Event.addStepDataFailed(error: error))
             throw STError.unableToCompleteRequest
         }
     }
@@ -178,14 +227,23 @@ final class HKHealthDataRepository: HealthDataRepository {
     ///   - value: Weight in pounds.
     /// - Throws: `STError.authNotDetermined`, `STError.sharingDenied`, or `STError.unableToCompleteRequest`
     func addWeightData(for date: Date, value: Double) async throws {
+        logService?.trackEvent(event: Event.addWeightDataStarted(value: value))
+
         let status = store.authorizationStatus(for: HKQuantityType(.bodyMass))
         switch status {
         case .notDetermined:
-            throw STError.authNotDetermined
+            let error = STError.authNotDetermined
+            logService?.trackEvent(event: Event.addWeightDataFailed(error: error))
+            throw error
+
         case .sharingDenied:
-            throw STError.sharingDenied(quantityType: "weight")
+            let error = STError.sharingDenied(quantityType: "weight")
+            logService?.trackEvent(event: Event.addWeightDataFailed(error: error))
+            throw error
+
         case .sharingAuthorized:
             break
+
         @unknown default:
             break
         }
@@ -200,7 +258,9 @@ final class HKHealthDataRepository: HealthDataRepository {
 
         do {
             try await store.save(weightSample)
+            logService?.trackEvent(event: Event.addWeightDataSucceeded)
         } catch {
+            logService?.trackEvent(event: Event.addWeightDataFailed(error: error))
             throw STError.unableToCompleteRequest
         }
     }
@@ -231,4 +291,85 @@ final class HKHealthDataRepository: HealthDataRepository {
 //        try? await store.save(mockSamples)
 //        print("Dummy data added")
 //    }
+}
+
+extension HKHealthDataRepository {
+    enum Event: LoggableEvent {
+        case authorizationStarted
+        case authorizationFailed(error: Error)
+        case authorizationSucceeded
+
+        case fetchStepsStarted
+        case fetchStepsSucceeded(count: Int)
+        case fetchStepsFailed(error: Error)
+
+        case fetchWeightsStarted(daysBack: Int)
+        case fetchWeightsSucceeded(count: Int)
+        case fetchWeightsFailed(error: Error)
+
+        case addStepDataStarted(value: Double)
+        case addStepDataSucceeded
+        case addStepDataFailed(error: Error)
+
+        case addWeightDataStarted(value: Double)
+        case addWeightDataSucceeded
+        case addWeightDataFailed(error: Error)
+
+        var eventName: String {
+            switch self {
+            case .authorizationStarted: "HealthData_Authorization_Started"
+            case .authorizationFailed: "HealthData_Authorization_Failed"
+            case .authorizationSucceeded: "HealthData_Authorization_Succeeded"
+            case .fetchStepsStarted: "HealthData_FetchSteps_Started"
+            case .fetchStepsSucceeded: "HealthData_FetchSteps_Succeeded"
+            case .fetchStepsFailed: "HealthData_FetchSteps_Failed"
+            case .fetchWeightsStarted: "HealthData_FetchWeights_Started"
+            case .fetchWeightsSucceeded: "HealthData_FetchWeights_Succeeded"
+            case .fetchWeightsFailed: "HealthData_FetchWeights_Failed"
+            case .addStepDataStarted: "HealthData_AddSteps_Started"
+            case .addStepDataSucceeded: "HealthData_AddSteps_Succeeded"
+            case .addStepDataFailed: "HealthData_AddSteps_Failed"
+            case .addWeightDataStarted: "HealthData_AddWeight_Started"
+            case .addWeightDataSucceeded: "HealthData_AddWeight_Succeeded"
+            case .addWeightDataFailed: "HealthData_AddWeight_Failed"
+            }
+        }
+
+        var parameters: [String: Any]? {
+            switch self {
+            case let .authorizationFailed(error),
+                 let .fetchStepsFailed(error),
+                 let .fetchWeightsFailed(error),
+                 let .addStepDataFailed(error),
+                 let .addWeightDataFailed(error):
+                ["error": error.localizedDescription]
+            case let .fetchStepsSucceeded(count):
+                ["count": count]
+            case let .fetchWeightsStarted(daysBack):
+                ["daysBack": daysBack]
+            case let .fetchWeightsSucceeded(count):
+                ["count": count]
+            case let .addStepDataStarted(value):
+                ["value": value]
+            case let .addWeightDataStarted(value):
+                ["value": value]
+            default:
+                nil
+            }
+        }
+
+        var type: LogType {
+            switch self {
+            case .authorizationFailed,
+                 .fetchStepsFailed,
+                 .fetchWeightsFailed:
+                .warning
+            case .addStepDataFailed,
+                 .addWeightDataFailed:
+                .severe
+            default:
+                .analytic
+            }
+        }
+    }
 }

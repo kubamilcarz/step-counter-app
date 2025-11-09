@@ -10,34 +10,60 @@ import Foundation
 struct Dependencies {
     private let container: DependencyContainer
 
+    let logService: LogService
+
+    let abTestRepo: ABTestRepository
     let healthDataRepo: HealthDataRepository
     let healthDataStore: HealthDataStore
     let dataIntelligenceRepo: DataIntelligenceRepository
-    let abTestRepo: ABTestRepository
 
     init(config: BuildConfiguration) {
         switch config {
         case .mock:
-            abTestRepo = ABTestRepository(service: MockABTestService())
+            logService = LogService(clients: [MockLogClient()])
+
+            abTestRepo = ABTestRepository(
+                service: MockABTestService(),
+                logService: logService
+            )
             healthDataRepo = MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights)
+
             dataIntelligenceRepo = MockIntelligenceRepository()
 
         case .dev:
-            abTestRepo = ABTestRepository(service: LocalABTestService())
-            healthDataRepo = HKHealthDataRepository()
+            logService = LogService(clients: [OSLogClient()])
+
+            abTestRepo = ABTestRepository(
+                service: LocalABTestService(),
+                logService: logService
+            )
+            healthDataRepo = HKHealthDataRepository(
+                logService: logService
+            )
 
             if #available(iOS 26.0, *) {
-                dataIntelligenceRepo = HKIntelligenceRepository()
+                dataIntelligenceRepo = HKIntelligenceRepository(
+                    tools: [HealthDataTool(healthDataRepository: healthDataRepo)]
+                )
             } else {
                 dataIntelligenceRepo = MockIntelligenceRepository()
             }
 
         case .prod:
-            abTestRepo = ABTestRepository(service: LocalABTestService())
-            healthDataRepo = HKHealthDataRepository()
+            logService = LogService(clients: [OSLogClient()])
+
+            abTestRepo = ABTestRepository(
+                service: LocalABTestService(),
+                logService: logService
+            )
+            healthDataRepo = HKHealthDataRepository(
+                logService: logService
+            )
 
             if #available(iOS 26.0, *) {
-                dataIntelligenceRepo = HKIntelligenceRepository()
+                dataIntelligenceRepo = HKIntelligenceRepository(
+                    tools: [HealthDataTool(healthDataRepository: healthDataRepo)]
+                )
             } else {
                 dataIntelligenceRepo = MockIntelligenceRepository()
             }
@@ -50,6 +76,8 @@ struct Dependencies {
         // MARK: - Container Registeration
 
         let container = DependencyContainer()
+
+        container.register(LogService.self, service: logService)
 
         container.register(ABTestRepository.self, service: abTestRepo)
         container.register(HealthDataRepository.self, service: healthDataRepo)

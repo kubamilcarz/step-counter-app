@@ -132,7 +132,7 @@ struct DashboardView: View {
             healthDataRepo: MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights),
             healthDataStore: HealthDataStore(),
             dataIntelligenceRepo: MockIntelligenceRepository(),
-            abTestRepo: ABTestRepository(service: MockABTestService())
+            abTestRepo: ABTestRepository(service: MockABTestService(), logService: nil)
         )
     )
 }
@@ -143,7 +143,10 @@ struct DashboardView: View {
             healthDataRepo: MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights),
             healthDataStore: HealthDataStore(),
             dataIntelligenceRepo: MockIntelligenceRepository(),
-            abTestRepo: ABTestRepository(service: MockABTestService(appOpenOnHealthMetricTest: .weight))
+            abTestRepo: ABTestRepository(
+                service: MockABTestService(appOpenOnHealthMetricTest: .weight),
+                logService: nil
+            )
         )
     )
 }
@@ -154,7 +157,10 @@ struct DashboardView: View {
             healthDataRepo: MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights),
             healthDataStore: HealthDataStore(),
             dataIntelligenceRepo: MockIntelligenceRepository(),
-            abTestRepo: ABTestRepository(service: MockABTestService(areChartsReversedTest: true))
+            abTestRepo: ABTestRepository(
+                service: MockABTestService(areChartsReversedTest: true),
+                logService: nil
+            )
         )
     )
 }
@@ -165,7 +171,10 @@ struct DashboardView: View {
             healthDataRepo: MockHealthDataRepository(),
             healthDataStore: HealthDataStore(),
             dataIntelligenceRepo: MockIntelligenceRepository(),
-            abTestRepo: ABTestRepository(service: MockABTestService())
+            abTestRepo: ABTestRepository(
+                service: MockABTestService(),
+                logService: nil
+            )
         )
     )
 }
@@ -176,7 +185,10 @@ struct DashboardView: View {
             healthDataRepo: MockHealthDataRepository(authorizationState: .denied(STError.authNotDetermined)),
             healthDataStore: HealthDataStore(),
             dataIntelligenceRepo: MockIntelligenceRepository(),
-            abTestRepo: ABTestRepository(service: MockABTestService())
+            abTestRepo: ABTestRepository(
+                service: MockABTestService(),
+                logService: nil
+            )
         )
     )
 }

@@ -8,12 +8,20 @@
 import Foundation
 import FoundationModels
 
+/// Apple Intelligence-backed repository that streams motivational fitness coaching based on Health data.
 @available(iOS 26.0, *)
 @Observable
 final class HKIntelligenceRepository: DataIntelligenceRepository {
+    private let tools: [any Tool]
     let model: SystemLanguageModel = .default
     var coachMessage: String?
     var isThinking = false
+
+    /// Creates the repository with a preconfigured toolchain for the language model session.
+    /// - Parameter tools: Tool definitions exposed to the language model. Defaults to an empty array for tests.
+    init(tools: [any Tool] = []) {
+        self.tools = tools
+    }
 
     var isAvailable: Bool {
         model.isAvailable
@@ -28,7 +36,7 @@ final class HKIntelligenceRepository: DataIntelligenceRepository {
         coachMessage = nil
 
         let session = LanguageModelSession(
-            tools: [HealthDataTool(healthDataRepository: HKHealthDataRepository())],
+            tools: tools,
             instructions: "You are a high-energy motivational fitness coach. You love to analyze step count and weight data to surface valuable insights and motivate people along their fitness journey and help them with their fitness goals."
         )
 
