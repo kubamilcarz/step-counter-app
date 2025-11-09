@@ -298,7 +298,7 @@ struct ABTestRepositoryTests {
             areChartsReversedTest: true
         )
 
-        let repository = ABTestRepository(service: service)
+        let repository = ABTestRepository(service: service, logService: nil)
         await Task.yield()
 
         #expect(repository.activeTests.appOpenOnHealthMetricTest == .weight)
@@ -312,7 +312,7 @@ struct ABTestRepositoryTests {
             areChartsReversedTest: false
         )
 
-        let repository = ABTestRepository(service: service)
+        let repository = ABTestRepository(service: service, logService: nil)
         let updated = ActiveABTests(
             appOpenOnHealthMetricTest: .weight,
             areChartsReversedTest: true
@@ -325,5 +325,58 @@ struct ABTestRepositoryTests {
         #expect(repository.activeTests.areChartsReversedTest == true)
         #expect(service.activeTests.appOpenOnHealthMetricTest == .weight)
         #expect(service.activeTests.areChartsReversedTest == true)
+    }
+}
+
+@Suite("Log Service Tests")
+struct LogServiceTests {
+    @MainActor @Test
+    func trackAnyLoggableEvent_forwardsToAllClients() {
+        let clientA = MockLogClient()
+        let clientB = MockLogClient()
+        let service = LogService(clients: [clientA, clientB])
+        let event = AnyLoggableEvent(eventName: "test_event", parameters: ["value": 1], type: .warning)
+
+        service.trackEvent(event: event)
+
+        #expect(clientA.trackEventCallCount == 1)
+        #expect(clientB.trackEventCallCount == 1)
+        #expect(clientA.recordedEvents.first?.eventName == "test_event")
+        #expect(clientB.recordedEvents.first?.type == .warning)
+    }
+
+    @MainActor @Test
+    func trackProtocolEvent_forwardsToAllClients() {
+        struct TestEvent: LoggableEvent {
+            let eventName: String
+            let parameters: [String: Any]?
+            let type: LogType
+        }
+
+        let client = MockLogClient()
+        let service = LogService(clients: [client])
+        let event = TestEvent(eventName: "protocol_event", parameters: ["source": "unit"], type: .severe)
+
+        service.trackEvent(event: event)
+
+        #expect(client.trackEventCallCount == 1)
+        #expect(client.recordedEvents.count == 1)
+        #expect(client.recordedEvents.first?.eventName == "protocol_event")
+        #expect(client.recordedEvents.first?.type == .severe)
+    }
+
+    @MainActor @Test
+    func trackEventName_constructsAnyLoggableEventWithDefaults() {
+        let client = MockLogClient()
+        let service = LogService(clients: [client])
+
+        service.trackEvent(eventName: "default_event")
+
+        #expect(client.trackEventCallCount == 1)
+        #expect(client.recordedEvents.count == 1)
+        #expect(client.recordedEvents.first?.eventName == "default_event")
+        #expect((client.recordedEvents.first as? AnyLoggableEvent) != nil)
+        #expect(client.recordedEvents.first?.type == .analytic)
+        #expect(client.recordedEvents.first?.parameters == nil)
     }
 }

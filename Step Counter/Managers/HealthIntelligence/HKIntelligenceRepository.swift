@@ -8,6 +8,7 @@
 import Foundation
 import FoundationModels
 
+/// Apple Intelligence-backed repository that streams motivational fitness coaching based on Health data.
 @available(iOS 26.0, *)
 @Observable
 final class HKIntelligenceRepository: DataIntelligenceRepository {
@@ -16,6 +17,8 @@ final class HKIntelligenceRepository: DataIntelligenceRepository {
     var coachMessage: String?
     var isThinking = false
 
+    /// Creates the repository with a preconfigured toolchain for the language model session.
+    /// - Parameter tools: Tool definitions exposed to the language model. Defaults to an empty array for tests.
     init(tools: [any Tool] = []) {
         self.tools = tools
     }
