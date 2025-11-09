@@ -37,7 +37,9 @@ struct Dependencies {
                 service: LocalABTestService(),
                 logService: logService
             )
-            healthDataRepo = HKHealthDataRepository()
+            healthDataRepo = HKHealthDataRepository(
+                logService: logService
+            )
 
             if #available(iOS 26.0, *) {
                 dataIntelligenceRepo = HKIntelligenceRepository()
@@ -52,8 +54,10 @@ struct Dependencies {
                 service: LocalABTestService(),
                 logService: logService
             )
-            healthDataRepo = HKHealthDataRepository()
-
+            healthDataRepo = HKHealthDataRepository(
+                logService: logService
+            )
+            
             if #available(iOS 26.0, *) {
                 dataIntelligenceRepo = HKIntelligenceRepository()
             } else {
