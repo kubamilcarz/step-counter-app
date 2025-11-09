@@ -22,7 +22,10 @@ struct Dependencies {
         case .mock:
             logService = LogService(clients: [MockLogClient()])
             
-            abTestRepo = ABTestRepository(service: MockABTestService())
+            abTestRepo = ABTestRepository(
+                service: MockABTestService(),
+                logService: logService
+            )
             healthDataRepo = MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights)
             
             dataIntelligenceRepo = MockIntelligenceRepository()
@@ -30,7 +33,10 @@ struct Dependencies {
         case .dev:
             logService = LogService(clients: [OSLogClient()])
             
-            abTestRepo = ABTestRepository(service: LocalABTestService())
+            abTestRepo = ABTestRepository(
+                service: LocalABTestService(),
+                logService: logService
+            )
             healthDataRepo = HKHealthDataRepository()
 
             if #available(iOS 26.0, *) {
@@ -42,7 +48,10 @@ struct Dependencies {
         case .prod:
             logService = LogService(clients: [OSLogClient()])
             
-            abTestRepo = ABTestRepository(service: LocalABTestService())
+            abTestRepo = ABTestRepository(
+                service: LocalABTestService(),
+                logService: logService
+            )
             healthDataRepo = HKHealthDataRepository()
 
             if #available(iOS 26.0, *) {
