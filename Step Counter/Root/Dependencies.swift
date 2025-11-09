@@ -9,7 +9,7 @@ import Foundation
 
 struct Dependencies {
     private let container: DependencyContainer
-    
+
     let logService: LogService
 
     let abTestRepo: ABTestRepository
@@ -21,18 +21,18 @@ struct Dependencies {
         switch config {
         case .mock:
             logService = LogService(clients: [MockLogClient()])
-            
+
             abTestRepo = ABTestRepository(
                 service: MockABTestService(),
                 logService: logService
             )
             healthDataRepo = MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights)
-            
+
             dataIntelligenceRepo = MockIntelligenceRepository()
 
         case .dev:
             logService = LogService(clients: [OSLogClient()])
-            
+
             abTestRepo = ABTestRepository(
                 service: LocalABTestService(),
                 logService: logService
@@ -51,7 +51,7 @@ struct Dependencies {
 
         case .prod:
             logService = LogService(clients: [OSLogClient()])
-            
+
             abTestRepo = ABTestRepository(
                 service: LocalABTestService(),
                 logService: logService
@@ -59,7 +59,7 @@ struct Dependencies {
             healthDataRepo = HKHealthDataRepository(
                 logService: logService
             )
-            
+
             if #available(iOS 26.0, *) {
                 dataIntelligenceRepo = HKIntelligenceRepository(
                     tools: [HealthDataTool(healthDataRepository: healthDataRepo)]
@@ -78,7 +78,7 @@ struct Dependencies {
         let container = DependencyContainer()
 
         container.register(LogService.self, service: logService)
-        
+
         container.register(ABTestRepository.self, service: abTestRepo)
         container.register(HealthDataRepository.self, service: healthDataRepo)
         container.register(HealthDataStore.self, service: healthDataStore)

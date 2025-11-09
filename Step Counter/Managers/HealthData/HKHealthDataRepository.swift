@@ -22,7 +22,7 @@ final class HKHealthDataRepository: HealthDataRepository {
 
     /// HealthKit quantity types this app accesses (stepCount, bodyMass).
     private let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
-    
+
     init(logService: LogService?) {
         self.logService = logService
     }
@@ -190,12 +190,15 @@ final class HKHealthDataRepository: HealthDataRepository {
             let error = STError.authNotDetermined
             logService?.trackEvent(event: Event.addStepDataFailed(error: error))
             throw error
+
         case .sharingDenied:
             let error = STError.sharingDenied(quantityType: "step count")
             logService?.trackEvent(event: Event.addStepDataFailed(error: error))
             throw error
+
         case .sharingAuthorized:
             break
+
         @unknown default:
             break
         }
@@ -232,12 +235,15 @@ final class HKHealthDataRepository: HealthDataRepository {
             let error = STError.authNotDetermined
             logService?.trackEvent(event: Event.addWeightDataFailed(error: error))
             throw error
+
         case .sharingDenied:
             let error = STError.sharingDenied(quantityType: "weight")
             logService?.trackEvent(event: Event.addWeightDataFailed(error: error))
             throw error
+
         case .sharingAuthorized:
             break
+
         @unknown default:
             break
         }
@@ -336,19 +342,19 @@ extension HKHealthDataRepository {
                  let .fetchWeightsFailed(error),
                  let .addStepDataFailed(error),
                  let .addWeightDataFailed(error):
-                return ["error": error.localizedDescription]
+                ["error": error.localizedDescription]
             case let .fetchStepsSucceeded(count):
-                return ["count": count]
+                ["count": count]
             case let .fetchWeightsStarted(daysBack):
-                return ["daysBack": daysBack]
+                ["daysBack": daysBack]
             case let .fetchWeightsSucceeded(count):
-                return ["count": count]
+                ["count": count]
             case let .addStepDataStarted(value):
-                return ["value": value]
+                ["value": value]
             case let .addWeightDataStarted(value):
-                return ["value": value]
+                ["value": value]
             default:
-                return nil
+                nil
             }
         }
 
@@ -357,12 +363,12 @@ extension HKHealthDataRepository {
             case .authorizationFailed,
                  .fetchStepsFailed,
                  .fetchWeightsFailed:
-                return .warning
+                .warning
             case .addStepDataFailed,
                  .addWeightDataFailed:
-                return .severe
+                .severe
             default:
-                return .analytic
+                .analytic
             }
         }
     }

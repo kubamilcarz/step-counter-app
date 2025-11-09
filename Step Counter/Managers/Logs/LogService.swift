@@ -14,7 +14,7 @@ final class LogService {
     init(clients: [LogClient] = []) {
         self.clients = clients
     }
-    
+
     func trackEvent(event: AnyLoggableEvent) {
         for client in clients {
             client.trackEvent(event: event)

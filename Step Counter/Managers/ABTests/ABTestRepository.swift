@@ -49,7 +49,7 @@ final class ABTestRepository {
     func override(updatedTests: ActiveABTests) throws {
         logService?.trackEvent(event: Event.updateStarted)
         try service.saveUpdatedConfig(updatedTests: updatedTests)
-        
+
         logService?.trackEvent(event: Event.updateSuccess)
         configure()
     }
@@ -62,7 +62,7 @@ extension ABTestRepository {
         case configurationFailed(error: Error)
         case updateStarted
         case updateSuccess
-        
+
         var eventName: String {
             switch self {
             case .configurationStarted: "ABTests_Config_Started"
@@ -72,15 +72,15 @@ extension ABTestRepository {
             case .updateSuccess: "ABTests_Update_Success"
             }
         }
-        
+
         var parameters: [String: Any]? {
             switch self {
-            case .configurationFailed(let error):
+            case let .configurationFailed(error):
                 ["error": error.localizedDescription]
             default: nil
             }
         }
-        
+
         var type: LogType {
             switch self {
             case .configurationFailed: .warning
