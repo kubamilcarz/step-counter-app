@@ -288,3 +288,42 @@ struct ChartHelperTests {
         #expect(result[1].value == 0.0)
     }
 }
+
+@Suite("A/B Test Repository Tests")
+struct ABTestRepositoryTests {
+    @MainActor @Test
+    func repositoryInitializesWithServiceState() async {
+        let service = MockABTestService(
+            appOpenOnHealthMetricTest: .weight,
+            areChartsReversedTest: true
+        )
+
+        let repository = ABTestRepository(service: service)
+        await Task.yield()
+
+        #expect(repository.activeTests.appOpenOnHealthMetricTest == .weight)
+        #expect(repository.activeTests.areChartsReversedTest == true)
+    }
+
+    @MainActor @Test
+    func overridePersistsAndRefreshesActiveTests() async throws {
+        let service = MockABTestService(
+            appOpenOnHealthMetricTest: .steps,
+            areChartsReversedTest: false
+        )
+
+        let repository = ABTestRepository(service: service)
+        let updated = ActiveABTests(
+            appOpenOnHealthMetricTest: .weight,
+            areChartsReversedTest: true
+        )
+
+        try repository.override(updatedTests: updated)
+        await Task.yield()
+
+        #expect(repository.activeTests.appOpenOnHealthMetricTest == .weight)
+        #expect(repository.activeTests.areChartsReversedTest == true)
+        #expect(service.activeTests.appOpenOnHealthMetricTest == .weight)
+        #expect(service.activeTests.areChartsReversedTest == true)
+    }
+}
