@@ -33,22 +33,42 @@ struct DashboardView: View {
 
                     switch viewModel.selectedMetric {
                     case .steps:
-                        StepBarChart(
-                            chartData: ChartHelper.convert(data: viewModel.stepData)
-                        )
+                        if viewModel.shouldReverseCharts {
+                            StepPieChart(
+                                chartData: ChartHelper.averageWeekdayCount(for: viewModel.stepData)
+                            )
 
-                        StepPieChart(
-                            chartData: ChartHelper.averageWeekdayCount(for: viewModel.stepData)
-                        )
+                            StepBarChart(
+                                chartData: ChartHelper.convert(data: viewModel.stepData)
+                            )
+                        } else {
+                            StepBarChart(
+                                chartData: ChartHelper.convert(data: viewModel.stepData)
+                            )
+
+                            StepPieChart(
+                                chartData: ChartHelper.averageWeekdayCount(for: viewModel.stepData)
+                            )
+                        }
 
                     case .weight:
-                        WeightLineChart(
-                            chartData: ChartHelper.convert(data: viewModel.weightData)
-                        )
+                        if viewModel.shouldReverseCharts {
+                            WeightDiffBarChart(
+                                chartData: ChartHelper.averageDailyWeightDiffs(for: viewModel.weightDiffData)
+                            )
 
-                        WeightDiffBarChart(
-                            chartData: ChartHelper.averageDailyWeightDiffs(for: viewModel.weightDiffData)
-                        )
+                            WeightLineChart(
+                                chartData: ChartHelper.convert(data: viewModel.weightData)
+                            )
+                        } else {
+                            WeightLineChart(
+                                chartData: ChartHelper.convert(data: viewModel.weightData)
+                            )
+
+                            WeightDiffBarChart(
+                                chartData: ChartHelper.averageDailyWeightDiffs(for: viewModel.weightDiffData)
+                            )
+                        }
                     }
                 }
                 .padding(16)
@@ -111,7 +131,30 @@ struct DashboardView: View {
         viewModel: DashboardViewModel(
             healthDataRepo: MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights),
             healthDataStore: HealthDataStore(),
-            dataIntelligenceRepo: MockIntelligenceRepository()
+            dataIntelligenceRepo: MockIntelligenceRepository(),
+            abTestRepo: ABTestRepository(service: MockABTestService())
+        )
+    )
+}
+
+#Preview("Regular - ABTest (Weight default)") {
+    DashboardView(
+        viewModel: DashboardViewModel(
+            healthDataRepo: MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights),
+            healthDataStore: HealthDataStore(),
+            dataIntelligenceRepo: MockIntelligenceRepository(),
+            abTestRepo: ABTestRepository(service: MockABTestService(appOpenOnHealthMetricTest: .weight))
+        )
+    )
+}
+
+#Preview("Regular - ABTest (Reverse Charts)") {
+    DashboardView(
+        viewModel: DashboardViewModel(
+            healthDataRepo: MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights),
+            healthDataStore: HealthDataStore(),
+            dataIntelligenceRepo: MockIntelligenceRepository(),
+            abTestRepo: ABTestRepository(service: MockABTestService(areChartsReversedTest: true))
         )
     )
 }
@@ -121,7 +164,8 @@ struct DashboardView: View {
         viewModel: DashboardViewModel(
             healthDataRepo: MockHealthDataRepository(),
             healthDataStore: HealthDataStore(),
-            dataIntelligenceRepo: MockIntelligenceRepository()
+            dataIntelligenceRepo: MockIntelligenceRepository(),
+            abTestRepo: ABTestRepository(service: MockABTestService())
         )
     )
 }
@@ -131,7 +175,8 @@ struct DashboardView: View {
         viewModel: DashboardViewModel(
             healthDataRepo: MockHealthDataRepository(authorizationState: .denied(STError.authNotDetermined)),
             healthDataStore: HealthDataStore(),
-            dataIntelligenceRepo: MockIntelligenceRepository()
+            dataIntelligenceRepo: MockIntelligenceRepository(),
+            abTestRepo: ABTestRepository(service: MockABTestService())
         )
     )
 }

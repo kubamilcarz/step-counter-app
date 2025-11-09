@@ -17,7 +17,8 @@ struct StepCounterApp: App {
                 viewModel: DashboardViewModel(
                     healthDataRepo: delegate.dependencies.healthDataRepo,
                     healthDataStore: delegate.dependencies.healthDataStore,
-                    dataIntelligenceRepo: delegate.dependencies.dataIntelligenceRepo
+                    dataIntelligenceRepo: delegate.dependencies.dataIntelligenceRepo,
+                    abTestRepo: delegate.dependencies.abTestRepo
                 )
             )
         }

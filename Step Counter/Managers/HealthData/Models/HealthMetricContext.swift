@@ -19,7 +19,7 @@ import SwiftUI
 ///   - id: The identity of the metric (returns the enum case).
 ///   - title: A localized, user-facing title for the metric.
 ///   - color: A `Color` used to visually distinguish the metric in the UI.
-enum HealthMetricContext: CaseIterable, Identifiable {
+enum HealthMetricContext: String, CaseIterable, Identifiable, Codable {
     case steps, weight
 
     var id: Self { self }

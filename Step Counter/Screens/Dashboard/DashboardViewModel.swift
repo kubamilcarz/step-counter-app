@@ -12,6 +12,7 @@ final class DashboardViewModel {
     let healthDataRepo: HealthDataRepository
     let healthDataStore: HealthDataStore
     let dataIntelligenceRepo: DataIntelligenceRepository
+    let abTestRepo: ABTestRepository
 
     @ObservationIgnored
     private var fetchTask: Task<Void, Never>?
@@ -36,14 +37,24 @@ final class DashboardViewModel {
         healthDataStore.weightDiffData
     }
 
+    var preselectedMetric: HealthMetricContext {
+        abTestRepo.activeTests.appOpenOnHealthMetricTest
+    }
+
+    var shouldReverseCharts: Bool {
+        abTestRepo.activeTests.areChartsReversedTest
+    }
+
     init(
         healthDataRepo: HealthDataRepository,
         healthDataStore: HealthDataStore,
-        dataIntelligenceRepo: DataIntelligenceRepository
+        dataIntelligenceRepo: DataIntelligenceRepository,
+        abTestRepo: ABTestRepository
     ) {
         self.healthDataRepo = healthDataRepo
         self.healthDataStore = healthDataStore
         self.dataIntelligenceRepo = dataIntelligenceRepo
+        self.abTestRepo = abTestRepo
     }
 
     deinit {
@@ -51,6 +62,8 @@ final class DashboardViewModel {
     }
 
     func onAppear() {
+        selectedMetric = preselectedMetric
+
         fetchHealthData()
     }
 
