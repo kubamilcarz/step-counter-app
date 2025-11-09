@@ -73,7 +73,7 @@ extension ABTestRepository {
             }
         }
         
-        var parameters: [String : Any]? {
+        var parameters: [String: Any]? {
             switch self {
             case .configurationFailed(let error):
                 ["error": error.localizedDescription]

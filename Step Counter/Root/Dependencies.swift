@@ -42,7 +42,9 @@ struct Dependencies {
             )
 
             if #available(iOS 26.0, *) {
-                dataIntelligenceRepo = HKIntelligenceRepository()
+                dataIntelligenceRepo = HKIntelligenceRepository(
+                    tools: [HealthDataTool(healthDataRepository: healthDataRepo)]
+                )
             } else {
                 dataIntelligenceRepo = MockIntelligenceRepository()
             }
@@ -59,7 +61,9 @@ struct Dependencies {
             )
             
             if #available(iOS 26.0, *) {
-                dataIntelligenceRepo = HKIntelligenceRepository()
+                dataIntelligenceRepo = HKIntelligenceRepository(
+                    tools: [HealthDataTool(healthDataRepository: healthDataRepo)]
+                )
             } else {
                 dataIntelligenceRepo = MockIntelligenceRepository()
             }

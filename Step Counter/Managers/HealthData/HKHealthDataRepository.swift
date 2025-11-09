@@ -336,9 +336,7 @@ extension HKHealthDataRepository {
                  let .fetchWeightsFailed(error),
                  let .addStepDataFailed(error),
                  let .addWeightDataFailed(error):
-                return [
-                    "error": error.localizedDescription,
-                ]
+                return ["error": error.localizedDescription]
             case let .fetchStepsSucceeded(count):
                 return ["count": count]
             case let .fetchWeightsStarted(daysBack):
