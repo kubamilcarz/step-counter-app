@@ -92,7 +92,8 @@ struct DashboardView: View {
             } content: {
                 HealthKitPermissionPrimingView(
                     viewModel: HealthKitPermissionPrimingViewModel(
-                        healthDataRepo: viewModel.healthDataRepo
+                        healthDataRepo: viewModel.healthDataRepo,
+                        logService: viewModel.logService
                     )
                 )
             }

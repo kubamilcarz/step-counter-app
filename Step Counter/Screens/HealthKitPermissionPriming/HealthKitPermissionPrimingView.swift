@@ -63,6 +63,7 @@ struct HealthKitPermissionPrimingView: View {
             isPresented: $viewModel.shouldShowErrorAlert,
             actions: {
                 Button("Settings") {
+                    viewModel.onSettingsTapped()
                     UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                 }
 
@@ -74,6 +75,8 @@ struct HealthKitPermissionPrimingView: View {
                 )
             }
         )
+        .onAppear(perform: viewModel.onViewAppear)
+        .onDisappear(perform: viewModel.onViewDisappear)
     }
 }
 
@@ -81,7 +84,8 @@ struct HealthKitPermissionPrimingView: View {
     HealthKitPermissionPrimingView(
         viewModel: HealthKitPermissionPrimingViewModel(
             // TODO: Implement mocking different results
-            healthDataRepo: MockHealthDataRepository()
+            healthDataRepo: MockHealthDataRepository(),
+            logService: nil
         )
     )
 }
