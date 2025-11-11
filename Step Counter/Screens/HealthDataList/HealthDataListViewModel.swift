@@ -12,6 +12,7 @@ final class HealthDataListViewModel {
     let healthDataStore: HealthDataStore
     // Only used to initialize sub-views
     let healthDataRepo: HealthDataRepository
+    let logService: LogService?
 
     private(set) var metric: HealthMetricContext = .steps
 
@@ -20,9 +21,10 @@ final class HealthDataListViewModel {
 
     var showAddDataSheet = false
 
-    init(healthDataRepo: HealthDataRepository, healthDataStore: HealthDataStore) {
+    init(healthDataRepo: HealthDataRepository, healthDataStore: HealthDataStore, logService: LogService?) {
         self.healthDataRepo = healthDataRepo
         self.healthDataStore = healthDataStore
+        self.logService = logService
     }
 
     func onAppear(config: HealthDataListViewConfig) {

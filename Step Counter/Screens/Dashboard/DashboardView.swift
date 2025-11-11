@@ -81,7 +81,8 @@ struct DashboardView: View {
                 HealthDataListView(
                     viewModel: HealthDataListViewModel(
                         healthDataRepo: viewModel.healthDataRepo,
-                        healthDataStore: viewModel.healthDataStore
+                        healthDataStore: viewModel.healthDataStore,
+                        logService: viewModel.logService
                     ),
                     config: .init(metric: metric)
                 )
@@ -132,7 +133,8 @@ struct DashboardView: View {
             healthDataRepo: MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights),
             healthDataStore: HealthDataStore(),
             dataIntelligenceRepo: MockIntelligenceRepository(),
-            abTestRepo: ABTestRepository(service: MockABTestService(), logService: nil)
+            abTestRepo: ABTestRepository(service: MockABTestService(), logService: nil),
+            logService: nil
         )
     )
 }
@@ -146,7 +148,8 @@ struct DashboardView: View {
             abTestRepo: ABTestRepository(
                 service: MockABTestService(appOpenOnHealthMetricTest: .weight),
                 logService: nil
-            )
+            ),
+            logService: nil
         )
     )
 }
@@ -160,7 +163,8 @@ struct DashboardView: View {
             abTestRepo: ABTestRepository(
                 service: MockABTestService(areChartsReversedTest: true),
                 logService: nil
-            )
+            ),
+            logService: nil
         )
     )
 }
@@ -174,7 +178,8 @@ struct DashboardView: View {
             abTestRepo: ABTestRepository(
                 service: MockABTestService(),
                 logService: nil
-            )
+            ),
+            logService: nil
         )
     )
 }
@@ -188,7 +193,8 @@ struct DashboardView: View {
             abTestRepo: ABTestRepository(
                 service: MockABTestService(),
                 logService: nil
-            )
+            ),
+            logService: nil
         )
     )
 }

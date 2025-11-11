@@ -13,6 +13,7 @@ final class DashboardViewModel {
     let healthDataStore: HealthDataStore
     let dataIntelligenceRepo: DataIntelligenceRepository
     let abTestRepo: ABTestRepository
+    let logService: LogService?
 
     @ObservationIgnored
     private var fetchTask: Task<Void, Never>?
@@ -49,12 +50,14 @@ final class DashboardViewModel {
         healthDataRepo: HealthDataRepository,
         healthDataStore: HealthDataStore,
         dataIntelligenceRepo: DataIntelligenceRepository,
-        abTestRepo: ABTestRepository
+        abTestRepo: ABTestRepository,
+        logService: LogService?
     ) {
         self.healthDataRepo = healthDataRepo
         self.healthDataStore = healthDataStore
         self.dataIntelligenceRepo = dataIntelligenceRepo
         self.abTestRepo = abTestRepo
+        self.logService = logService
     }
 
     deinit {

@@ -100,7 +100,8 @@ struct AddDataView: View {
     AddDataView(
         viewModel: AddDataViewModel(
             healthDataRepo: MockHealthDataRepository(),
-            healthDataStore: HealthDataStore()
+            healthDataStore: HealthDataStore(),
+            logService: nil
         ),
         config: AddDataViewConfig(
             metric: .steps,
