@@ -105,10 +105,10 @@ struct DashboardView: View {
                             logService: viewModel.logService
                         )
                     )
-                        .presentationDetents([.medium, .large])
-                        .presentationDragIndicator(.visible)
-                        .presentationContentInteraction(.scrolls)
-                        .navigationTransition(.zoom(sourceID: "coachView", in: zoomTransition))
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationContentInteraction(.scrolls)
+                    .navigationTransition(.zoom(sourceID: "coachView", in: zoomTransition))
                 }
             }
             .alert(isPresented: $viewModel.shouldShowAlert, error: viewModel.fetchError) { _ in

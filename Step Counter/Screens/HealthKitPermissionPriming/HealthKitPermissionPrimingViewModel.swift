@@ -29,7 +29,7 @@ final class HealthKitPermissionPrimingViewModel {
     func onViewAppear() {
         logService?.trackEvent(event: Event.viewAppeared)
     }
-    
+
     func onViewDisappear() {
         logService?.trackEvent(event: Event.viewDisappeared)
     }
