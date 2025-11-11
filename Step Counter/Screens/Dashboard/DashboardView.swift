@@ -99,7 +99,12 @@ struct DashboardView: View {
             }
             .sheet(isPresented: $viewModel.showCoachSheet) {
                 if #available(iOS 26.0, *) {
-                    CoachView(viewModel: CoachViewModel(dataIntelligenceRepo: viewModel.dataIntelligenceRepo))
+                    CoachView(
+                        viewModel: CoachViewModel(
+                            dataIntelligenceRepo: viewModel.dataIntelligenceRepo,
+                            logService: viewModel.logService
+                        )
+                    )
                         .presentationDetents([.medium, .large])
                         .presentationDragIndicator(.visible)
                         .presentationContentInteraction(.scrolls)
