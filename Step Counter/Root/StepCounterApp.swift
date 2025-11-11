@@ -18,7 +18,8 @@ struct StepCounterApp: App {
                     healthDataRepo: delegate.dependencies.healthDataRepo,
                     healthDataStore: delegate.dependencies.healthDataStore,
                     dataIntelligenceRepo: delegate.dependencies.dataIntelligenceRepo,
-                    abTestRepo: delegate.dependencies.abTestRepo
+                    abTestRepo: delegate.dependencies.abTestRepo,
+                    logService: delegate.dependencies.logService
                 )
             )
         }

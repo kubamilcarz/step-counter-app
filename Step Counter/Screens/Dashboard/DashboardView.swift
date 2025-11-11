@@ -81,7 +81,8 @@ struct DashboardView: View {
                 HealthDataListView(
                     viewModel: HealthDataListViewModel(
                         healthDataRepo: viewModel.healthDataRepo,
-                        healthDataStore: viewModel.healthDataStore
+                        healthDataStore: viewModel.healthDataStore,
+                        logService: viewModel.logService
                     ),
                     config: .init(metric: metric)
                 )
@@ -91,17 +92,23 @@ struct DashboardView: View {
             } content: {
                 HealthKitPermissionPrimingView(
                     viewModel: HealthKitPermissionPrimingViewModel(
-                        healthDataRepo: viewModel.healthDataRepo
+                        healthDataRepo: viewModel.healthDataRepo,
+                        logService: viewModel.logService
                     )
                 )
             }
             .sheet(isPresented: $viewModel.showCoachSheet) {
                 if #available(iOS 26.0, *) {
-                    CoachView(viewModel: CoachViewModel(dataIntelligenceRepo: viewModel.dataIntelligenceRepo))
-                        .presentationDetents([.medium, .large])
-                        .presentationDragIndicator(.visible)
-                        .presentationContentInteraction(.scrolls)
-                        .navigationTransition(.zoom(sourceID: "coachView", in: zoomTransition))
+                    CoachView(
+                        viewModel: CoachViewModel(
+                            dataIntelligenceRepo: viewModel.dataIntelligenceRepo,
+                            logService: viewModel.logService
+                        )
+                    )
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationContentInteraction(.scrolls)
+                    .navigationTransition(.zoom(sourceID: "coachView", in: zoomTransition))
                 }
             }
             .alert(isPresented: $viewModel.shouldShowAlert, error: viewModel.fetchError) { _ in
@@ -132,7 +139,8 @@ struct DashboardView: View {
             healthDataRepo: MockHealthDataRepository(steps: MockData.steps, weights: MockData.weights),
             healthDataStore: HealthDataStore(),
             dataIntelligenceRepo: MockIntelligenceRepository(),
-            abTestRepo: ABTestRepository(service: MockABTestService(), logService: nil)
+            abTestRepo: ABTestRepository(service: MockABTestService(), logService: nil),
+            logService: nil
         )
     )
 }
@@ -146,7 +154,8 @@ struct DashboardView: View {
             abTestRepo: ABTestRepository(
                 service: MockABTestService(appOpenOnHealthMetricTest: .weight),
                 logService: nil
-            )
+            ),
+            logService: nil
         )
     )
 }
@@ -160,7 +169,8 @@ struct DashboardView: View {
             abTestRepo: ABTestRepository(
                 service: MockABTestService(areChartsReversedTest: true),
                 logService: nil
-            )
+            ),
+            logService: nil
         )
     )
 }
@@ -174,7 +184,8 @@ struct DashboardView: View {
             abTestRepo: ABTestRepository(
                 service: MockABTestService(),
                 logService: nil
-            )
+            ),
+            logService: nil
         )
     )
 }
@@ -188,7 +199,8 @@ struct DashboardView: View {
             abTestRepo: ABTestRepository(
                 service: MockABTestService(),
                 logService: nil
-            )
+            ),
+            logService: nil
         )
     )
 }

@@ -13,6 +13,7 @@ final class DashboardViewModel {
     let healthDataStore: HealthDataStore
     let dataIntelligenceRepo: DataIntelligenceRepository
     let abTestRepo: ABTestRepository
+    let logService: LogService?
 
     @ObservationIgnored
     private var fetchTask: Task<Void, Never>?
@@ -49,12 +50,14 @@ final class DashboardViewModel {
         healthDataRepo: HealthDataRepository,
         healthDataStore: HealthDataStore,
         dataIntelligenceRepo: DataIntelligenceRepository,
-        abTestRepo: ABTestRepository
+        abTestRepo: ABTestRepository,
+        logService: LogService?
     ) {
         self.healthDataRepo = healthDataRepo
         self.healthDataStore = healthDataStore
         self.dataIntelligenceRepo = dataIntelligenceRepo
         self.abTestRepo = abTestRepo
+        self.logService = logService
     }
 
     deinit {
@@ -64,10 +67,12 @@ final class DashboardViewModel {
     func onAppear() {
         selectedMetric = preselectedMetric
 
+        logService?.trackEvent(event: Event.viewAppeared(selectedMetric: preselectedMetric))
         fetchHealthData()
     }
 
     func onPermissionSheetDismissed() {
+        logService?.trackEvent(event: Event.permissionSheetDismissed)
         fetchHealthData()
     }
 
@@ -75,6 +80,7 @@ final class DashboardViewModel {
         fetchTask?.cancel()
         state = .loading
         shouldShowAlert = false
+        logService?.trackEvent(event: Event.fetchStarted(metric: selectedMetric))
 
         fetchTask = Task { [weak self] in
             guard let self else { return }
@@ -95,12 +101,14 @@ final class DashboardViewModel {
                 state = .success
                 showPermissionPriming = false
                 fetchTask = nil
+                logService?.trackEvent(event: Event.fetchSucceeded(metric: selectedMetric))
             } catch STError.authNotDetermined {
                 guard !Task.isCancelled else { return }
 
                 state = .initial
                 showPermissionPriming = true
                 fetchTask = nil
+                logService?.trackEvent(event: Event.fetchAuthNotDetermined)
             } catch STError.noData {
                 guard !Task.isCancelled else { return }
 
@@ -108,6 +116,7 @@ final class DashboardViewModel {
                 fetchError = .noData
                 shouldShowAlert = true
                 fetchTask = nil
+                logService?.trackEvent(event: Event.fetchNoData(metric: selectedMetric))
             } catch {
                 guard !Task.isCancelled else { return }
 
@@ -115,6 +124,57 @@ final class DashboardViewModel {
                 fetchError = .unableToCompleteRequest
                 shouldShowAlert = true
                 fetchTask = nil
+                logService?.trackEvent(event: Event.fetchFailed(metric: selectedMetric, error: error))
+            }
+        }
+    }
+}
+
+extension DashboardViewModel {
+    enum Event: LoggableEvent {
+        case viewAppeared(selectedMetric: HealthMetricContext)
+        case permissionSheetDismissed
+        case fetchStarted(metric: HealthMetricContext)
+        case fetchSucceeded(metric: HealthMetricContext)
+        case fetchFailed(metric: HealthMetricContext, error: Error)
+        case fetchNoData(metric: HealthMetricContext)
+        case fetchAuthNotDetermined
+
+        var eventName: String {
+            switch self {
+            case .viewAppeared: "Dashboard_View_Appeared"
+            case .permissionSheetDismissed: "Dashboard_PermissionSheet_Dismissed"
+            case .fetchStarted: "Dashboard_Fetch_Started"
+            case .fetchSucceeded: "Dashboard_Fetch_Succeeded"
+            case .fetchFailed: "Dashboard_Fetch_Failed"
+            case .fetchNoData: "Dashboard_Fetch_NoData"
+            case .fetchAuthNotDetermined: "Dashboard_Fetch_AuthNotDetermined"
+            }
+        }
+
+        var parameters: [String: Any]? {
+            switch self {
+            case let .viewAppeared(selectedMetric):
+                ["metric": selectedMetric.rawValue]
+            case let .fetchStarted(metric):
+                ["metric": metric.rawValue]
+            case let .fetchSucceeded(metric):
+                ["metric": metric.rawValue]
+            case let .fetchFailed(metric, error):
+                ["metric": metric.rawValue, "error": error.localizedDescription]
+            case let .fetchNoData(metric):
+                ["metric": metric.rawValue]
+            case .permissionSheetDismissed, .fetchAuthNotDetermined:
+                nil
+            }
+        }
+
+        var type: LogType {
+            switch self {
+            case .fetchFailed: .warning
+            case .fetchNoData: .info
+            case .fetchAuthNotDetermined: .info
+            default: .analytic
             }
         }
     }

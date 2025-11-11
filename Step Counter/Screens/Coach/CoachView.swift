@@ -120,7 +120,8 @@ struct CoachView: View {
         viewModel: CoachViewModel(
             dataIntelligenceRepo: MockIntelligenceRepository(
                 simulatedDelay: 0.1
-            )
+            ),
+            logService: nil
         )
     )
 }
@@ -132,7 +133,8 @@ struct CoachView: View {
 
     return CoachView(
         viewModel: CoachViewModel(
-            dataIntelligenceRepo: repository
+            dataIntelligenceRepo: repository,
+            logService: nil
         )
     )
 }
@@ -144,7 +146,8 @@ struct CoachView: View {
             dataIntelligenceRepo: MockIntelligenceRepository(
                 isAvailable: false,
                 message: "Coach Craig is offline right now."
-            )
+            ),
+            logService: nil
         )
     )
 }

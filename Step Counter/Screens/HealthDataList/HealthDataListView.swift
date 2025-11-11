@@ -76,7 +76,8 @@ struct HealthDataListView: View {
         let addDataView = AddDataView(
             viewModel: AddDataViewModel(
                 healthDataRepo: viewModel.healthDataRepo,
-                healthDataStore: viewModel.healthDataStore
+                healthDataStore: viewModel.healthDataStore,
+                logService: viewModel.logService
             ),
             config: AddDataViewConfig(metric: config.metric, onCompletion: viewModel.onAddSuccess)
         )
@@ -96,7 +97,8 @@ struct HealthDataListView: View {
         HealthDataListView(
             viewModel: HealthDataListViewModel(
                 healthDataRepo: MockHealthDataRepository(),
-                healthDataStore: HealthDataStore()
+                healthDataStore: HealthDataStore(),
+                logService: nil
             ),
             config: .init(metric: .steps)
         )
@@ -108,7 +110,8 @@ struct HealthDataListView: View {
         HealthDataListView(
             viewModel: HealthDataListViewModel(
                 healthDataRepo: MockHealthDataRepository(),
-                healthDataStore: HealthDataStore()
+                healthDataStore: HealthDataStore(),
+                logService: nil
             ),
             config: .init(metric: .weight)
         )
